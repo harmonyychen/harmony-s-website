@@ -191,7 +191,7 @@ button {
 
 h1 {
   margin: 0 0 22px -7px;
-  font-size: clamp(85px, 8.6vw, 120px);
+  font-size: clamp(80px, 8.6vw, 90px);
   font-weight: 700;
   line-height: 0.78;
   letter-spacing: -0.05em;
@@ -222,14 +222,14 @@ h1 {
 .intro {
   width: min(100%, 450px);
   margin: 0 0 20px;
-  font-size: clamp(22px, 1.8vw, 26px);
+  font-size: clamp(18px, 1.8vw, 24px);
   line-height: 1.15;
   letter-spacing: -0.035em;
 }
 
 .bio {
   width: min(100%, 450px);
-  font-size: clamp(15px, 1.25vw, 19px);
+  font-size: clamp(13px, 1.25vw, 16px);
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
@@ -370,6 +370,106 @@ h1 {
     scale(var(--decor-cat-scale, 1));
   transform-origin: center;
   transition: transform 300ms ease;
+  will-change: opacity, translate, transform, scale;
+}
+
+.is-ready .hero-decor .decor-cat {
+  animation:
+    decor-slide-in 850ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(120ms + var(--decor-entrance-delay, 0ms)) forwards,
+    cat-pulse 3.6s ease-in-out
+      calc(1100ms + var(--decor-entrance-delay, 0ms)) infinite;
+}
+
+@keyframes cat-pulse {
+  0%,
+  100% {
+    scale: 1;
+  }
+
+  50% {
+    scale: 1.028;
+  }
+}
+
+.is-ready .hero-decor .decor-frame {
+  animation:
+    decor-slide-in 850ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(120ms + var(--decor-entrance-delay, 0ms)) forwards,
+    decor-float var(--decor-motion-duration, 5.8s) ease-in-out
+      calc(1150ms + var(--decor-motion-delay, 0ms)) infinite alternate;
+}
+
+.decor-frame-1 {
+  --decor-motion-delay: 0ms;
+  --decor-motion-duration: 5.6s;
+}
+
+.decor-frame-2 {
+  --decor-motion-delay: 650ms;
+  --decor-motion-duration: 6.2s;
+}
+
+.decor-frame-3 {
+  --decor-motion-delay: 1250ms;
+  --decor-motion-duration: 5.9s;
+}
+
+.is-ready .hero-decor :is(
+  .decor-shelf,
+  .decor-book,
+  .decor-shelf-plant
+) {
+  animation:
+    decor-slide-in 850ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(120ms + var(--decor-entrance-delay, 0ms)) forwards,
+    decor-shelf-float 6.4s ease-in-out 1800ms infinite alternate;
+}
+
+.is-ready .hero-decor :is(.decor-light, .decor-plant) {
+  animation:
+    decor-slide-in 850ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(120ms + var(--decor-entrance-delay, 0ms)) forwards,
+    decor-sway var(--decor-motion-duration, 6s) ease-in-out
+      calc(1450ms + var(--decor-motion-delay, 0ms)) infinite alternate;
+}
+
+.decor-light {
+  --decor-motion-duration: 5.4s;
+  transform-origin: top center;
+}
+
+.decor-plant {
+  --decor-motion-delay: 900ms;
+  --decor-motion-duration: 6.6s;
+  transform-origin: bottom center;
+}
+
+.is-ready .hero-decor .decor-rug {
+  animation:
+    decor-slide-in 850ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(120ms + var(--decor-entrance-delay, 0ms)) forwards,
+    decor-breathe 6.8s ease-in-out 1700ms infinite alternate;
+}
+
+@keyframes decor-float {
+  from { translate: 0 0; }
+  to { translate: 0 -4px; }
+}
+
+@keyframes decor-shelf-float {
+  from { translate: 0 0; }
+  to { translate: 0 -2px; }
+}
+
+@keyframes decor-sway {
+  from { rotate: -0.45deg; }
+  to { rotate: 0.45deg; }
+}
+
+@keyframes decor-breathe {
+  from { scale: 1; }
+  to { scale: 1.012; }
 }
 
 .hero-decor .decor-cat:is(:hover, .is-hovered) {
@@ -728,7 +828,7 @@ h1 {
   align-items: baseline;
   gap: 6px;
   margin: 0 0 2px 13px;
-  font-size: 25px;
+  font-size: 21px;
   line-height: 1.05;
   letter-spacing: -0.045em;
 }
@@ -748,7 +848,7 @@ h1 {
 .project-card p {
   max-width: 505px;
   margin: 0 0 0 13px;
-  font-size: 21px;
+  font-size: 18px;
   line-height: 1.16;
   letter-spacing: -0.035em;
 }
@@ -970,7 +1070,7 @@ h1 {
 
   h1 {
     margin-left: -4px;
-    font-size: clamp(80px, 15vw, 110px);
+    font-size: clamp(80px, 14vw, 110px);
     line-height: 0.8;
   }
 
@@ -1014,12 +1114,12 @@ h1 {
 
   .project-card h2 {
     margin-left: 6px;
-    font-size: 23px;
+    font-size: 21px;
   }
 
   .project-card p {
     margin-left: 6px;
-    font-size: 21px;
+    font-size: 18px;
   }
 
   .ifaq-layout {
@@ -1229,5 +1329,11 @@ h1 {
   .hero-decor img {
     opacity: 1;
     translate: 0 0;
+  }
+
+  .is-ready .hero-decor img {
+    scale: 1;
+    rotate: 0deg;
+    animation-iteration-count: 1, 1 !important;
   }
 }
