@@ -192,6 +192,7 @@ const decorLight = heroDecor?.querySelector(".decor-light");
 const aboutDialog = document.querySelector("#about-dialog");
 const aboutTrigger = heroDecor?.querySelector(".decor-frame-2");
 const aboutClose = aboutDialog?.querySelector("[data-about-close]");
+let aboutOpenedWithKeyboard = false;
 const heroTextElements = [
   ...document.querySelectorAll(".name-word, .intro, .bio p"),
 ];
@@ -295,10 +296,14 @@ function closeAboutDialog() {
 }
 
 if (aboutDialog && aboutTrigger && aboutClose) {
-  aboutTrigger.addEventListener("click", openAboutDialog);
+  aboutTrigger.addEventListener("click", (event) => {
+    aboutOpenedWithKeyboard = event.detail === 0;
+    openAboutDialog();
+  });
   aboutTrigger.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
+    aboutOpenedWithKeyboard = true;
     openAboutDialog();
   });
 
@@ -308,7 +313,11 @@ if (aboutDialog && aboutTrigger && aboutClose) {
   });
   aboutDialog.addEventListener("close", () => {
     aboutTrigger.setAttribute("aria-expanded", "false");
-    aboutTrigger.focus();
+    if (aboutOpenedWithKeyboard) {
+      aboutTrigger.focus();
+    } else {
+      aboutTrigger.blur();
+    }
   });
 }
 
