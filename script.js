@@ -189,6 +189,9 @@ const placeholderLinks = [...document.querySelectorAll("[data-placeholder-link]"
 const hero = document.querySelector(".hero");
 const heroDecor = document.querySelector(".hero-decor");
 const decorLight = heroDecor?.querySelector(".decor-light");
+const aboutDialog = document.querySelector("#about-dialog");
+const aboutTrigger = heroDecor?.querySelector(".decor-frame-2");
+const aboutClose = aboutDialog?.querySelector("[data-about-close]");
 const heroTextElements = [
   ...document.querySelectorAll(".name-word, .intro, .bio p"),
 ];
@@ -274,6 +277,40 @@ decorHoverImages.forEach((image) => {
   image.addEventListener("pointerleave", endHover);
   image.addEventListener("pointercancel", endHover);
 });
+
+function openAboutDialog() {
+  if (!aboutDialog || !aboutTrigger || aboutDialog.open) return;
+  aboutTrigger.setAttribute("aria-expanded", "true");
+
+  if (typeof aboutDialog.showModal === "function") {
+    aboutDialog.showModal();
+  } else {
+    aboutDialog.setAttribute("open", "");
+  }
+}
+
+function closeAboutDialog() {
+  if (!aboutDialog || !aboutDialog.open) return;
+  aboutDialog.close();
+}
+
+if (aboutDialog && aboutTrigger && aboutClose) {
+  aboutTrigger.addEventListener("click", openAboutDialog);
+  aboutTrigger.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openAboutDialog();
+  });
+
+  aboutClose.addEventListener("click", closeAboutDialog);
+  aboutDialog.addEventListener("click", (event) => {
+    if (event.target === aboutDialog) closeAboutDialog();
+  });
+  aboutDialog.addEventListener("close", () => {
+    aboutTrigger.setAttribute("aria-expanded", "false");
+    aboutTrigger.focus();
+  });
+}
 
 function getTextContentRight(element) {
   const range = document.createRange();

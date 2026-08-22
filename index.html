@@ -65,24 +65,22 @@
 
         <div class="hero-inner">
           <h1 id="page-title" aria-label="Harmony Chen">
-            <span class="name-word name-harmony">harmony</span>
-            <span class="name-word name-chen">chen</span>
+            <span class="name-word name-harmony">hi, i'm</span>
+            <span class="name-word name-chen">harmony!</span>
           </h1>
 
           <p class="intro motion-item">
-            technology, design, product management.
+            <a class="bio-link" href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer">Systems Design Engineering @ UWaterloo</a>
           </p>
 
           <div class="bio motion-item">
             <div>
-              <p class="bio-label">currently:</p>
-              <p>> <a class="bio-link" href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer">Systems Design Engineering @ UWaterloo</a></p>
+              <p>> pursuing the intersection of technology, design, and product management.</p>
               <p>> managing programs for 11,000+ students @ <a class="bio-link" href="https://www.hosacanada.org" target="_blank" rel="noopener noreferrer">HOSA Canada</a></p>
-              <p>> looking for Summer 2027 internships</p>
+              <p>>  seeking Summer 2027 internship opportunities</p>
             </div>
             <div>
               <p class="bio-label">previously:</p>
-              <p>> empowering youth in arts and leadership @ <a class="bio-link" href="https://www.ignitefair.org" target="_blank" rel="noopener noreferrer">Ignite Fair</a>, @ <a class="bio-link" href="https://www.aporialiterary.ca" target="_blank" rel="noopener noreferrer"> Aporia Literary Journal</a></p>
               <p>> small business owner &amp; $3000 entrepreneurship grant recipient @ Reveries Studio</p>
               <p>> top 10 international finalist at the largest high school career competitions in the world @ DECA, FBLA, HOSA  </p>
             </div>
@@ -90,10 +88,10 @@
 
         </div>
 
-        <div class="hero-decor" aria-hidden="true">
+        <div class="hero-decor">
           <img class="decor-light" src="decor-light.png" data-hover-src="decor-light-hover.png" alt="">
           <img class="decor-frame decor-frame-1" src="decor-frame-1.png" alt="">
-          <img class="decor-frame decor-frame-2" src="decor-frame-2.png" data-hover-src="decor-frame-hover.png" alt="">
+          <img class="decor-frame decor-frame-2" src="decor-frame-2.png" data-hover-src="decor-frame-hover.png" role="button" tabindex="0" aria-label="Open about Harmony" aria-controls="about-dialog" aria-expanded="false" alt="">
           <img class="decor-frame decor-frame-3" src="decor-frame-3.png" alt="">
           <img class="decor-shelf" src="decor-shelf.png" alt="">
           <img class="decor-book decor-book-1" src="decor-book-1.png" alt="">
@@ -178,6 +176,23 @@
         </div>
       </section>
     </main>
+
+    <dialog class="about-dialog" id="about-dialog" aria-labelledby="about-dialog-title">
+      <article class="about-card">
+        <h2 class="visually-hidden" id="about-dialog-title">About Harmony</h2>
+        <button class="about-close" type="button" data-about-close aria-label="Close about Harmony">
+          <img src="about-close.png" alt="" />
+        </button>
+
+        <img class="about-portrait" src="about-portrait.png" alt="Harmony Chen outdoors" />
+
+        <div class="about-copy">
+          <p>Hey there, thanks for stopping by :)</p>
+          <p>My passion lies within being curious about the world and how different communities and technology interact. I build at the intersection of software, design, and product management.</p>
+          <p>Otherwise, catch me attempting to hit balls in tennis, harmonize during karaoke, and whimsy-max wherever I can. Life’s too short to be too serious.</p>
+        </div>
+      </article>
+    </dialog>
 
     <template id="project-card-template">
       <a class="project-card" data-card-link target="_blank" rel="noopener noreferrer">
