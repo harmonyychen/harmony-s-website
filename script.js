@@ -102,7 +102,7 @@ const collections = {
         "AI-powered practice app for the IB French Individual Oral.",
       video: "morra-ai.mp4",
       poster: "morra-ai-poster.png",
-      url: "https://morrai-production.up.railway.app", // Replace with the public Morra AI URL.
+      url: "https://morrai-production.up.railway.app",
       tags: ["Full-Stack Development", "Product Design"],
     },
   ], 
@@ -121,7 +121,7 @@ const collections = {
         "Leading 18 executives to create in-person events for 800+ students in the GTA.",
       poster: "ignite-fair.JPG",
       url: "https://www.ignitefair.org",
-      tags: ["Leadership", "Project Management"],
+      tags: ["Project Management", "Leadership"],
     },
   ],
   "case-study": [
