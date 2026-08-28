@@ -105,6 +105,7 @@ const collections = {
       url: "https://morrai-production.up.railway.app",
       tags: ["Full-Stack Development", "Product Design"],
     },
+    {title: "more coming soon!!"}
   ], 
   community: [
     {
