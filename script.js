@@ -99,7 +99,7 @@ const collections = {
     {
       title: "Morra Ai",
       description:
-        "AI-powered practice app for the IB French Individual Oral.",
+        "AI-powered practice app with live audio transcription, custom questions, and feedback for the IB French Individual Oral.",
       video: "morra-ai.mp4",
       poster: "morra-ai-poster.png",
       url: "https://morrai-production.up.railway.app",
@@ -129,10 +129,10 @@ const collections = {
     {
       title: "YPB Case Study",
       description:
-        "Market research and product decisions for Abercrombie's athleisure sub-brand, YPB.",
+        "Market research and product decisions for Abercrombie's athleisure sub-brand, YPB. Ivey Horizon Case Competition Winner.",
       video: "case-competition.mp4",
       poster: "case-competition-poster.png",
-      tags: ["Competition Winner", "Product Strategy"],
+      tags: ["Product Strategy", "Market Research"],
     },
   ],
   graphics: [
@@ -143,12 +143,12 @@ const collections = {
 const faqItems = [
   {
     question: "what’s your go-to digicam?",
-    answer: "My Nikon Coolpix. I love the ethereal quality of the (sometimes blinding) flash. I bring it with me everywhere, and it's a perfect haven of my favourite people and places.",
+    answer: "My Nikon Coolpix. I love the ethereal quality of the (sometimes blinding) flash. I bring it with me everywhere, and it's a haven of my favourite people and places.",
     photos: ["camera-1.png", "camera-2.png", "camera-3.png"],
   },
   {
-    question: "something you’re proud of creating?",
-    answer: "Aporia Literary Journal, a poetry and visual arts journal with works by incredibly talented young people across Canada. Check it out at",
+    question: "something you’re proud of building?",
+    answer: "Aporia Literary Journal, a poetry and visual arts journal & community with works by incredibly talented young people across Canada. Check it out at",
     answerLink: {
       href: "https://www.aporialiterary.ca",
       label: "aporialiterary.ca",
@@ -162,12 +162,12 @@ const faqItems = [
   },
   {
     question: "something you think more people should do?",
-    answer: "Lift weights with a focus on mobility and athleticism. Beyond aesthetics, it's an invaluable investment in your long-term quality of life.",
+    answer: "Lift weights with a focus on mobility and athleticism. It's an invaluable investment in long-term quality of life.",
     photos: ["exercise-1.png", "exercise-2.png", "exercise-3.png"],
   },
   {
     question: "favourite art medium?",
-    answer: "Acrylic!! I love how fast-drying it is. Makes it super easy to layer colours and finish a piece in one sitting.",
+    answer: "Acrylic!! I love how fast-drying it is. Makes it super easy to layer colours and complete an artwork in one sitting.",
     photos: ["art-1.png", "art-2.png", "art-3.png"],
   },
 
