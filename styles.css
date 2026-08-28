@@ -142,7 +142,7 @@ button {
   border-radius: 999px;
   background: rgba(126, 139, 183, 0.58);
   color: #e8ecf4;
-  font-size: clamp(15px, 1.4vw, 20px);
+  font-size: clamp(10px, 1.1vw, 14px);
   line-height: 1.1;
   text-decoration: none;
   white-space: nowrap;
