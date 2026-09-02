@@ -1,494 +1,410 @@
-const preloaderFrames = [
-  "preloader-1.png",
-  "preloader-2.png",
-  "preloader-3.png",
-  "preloader-4.png",
-  "preloader-5.png",
-  "preloader-6.png",
-];
 const sitePreloader = document.querySelector("#site-preloader");
-const preloaderImage = document.querySelector("#preloader-frame");
 const preloaderStartedAt = performance.now();
-const prefersReducedMotion = window.matchMedia(
-  "(prefers-reduced-motion: reduce)",
-).matches;
-let preloaderFrameIndex = 0;
-let preloaderFrameTimer = null;
-let preloaderHasFinished = false;
-
-preloaderFrames.slice(1).forEach((source) => {
-  const frame = new Image();
-  frame.src = source;
-});
-
-if (sitePreloader && preloaderImage && !prefersReducedMotion) {
-  preloaderFrameTimer = window.setInterval(() => {
-    preloaderFrameIndex = (preloaderFrameIndex + 1) % preloaderFrames.length;
-    preloaderImage.src = preloaderFrames[preloaderFrameIndex];
-  }, 200);
-}
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let preloaderFinished = false;
 
 function finishPreloader() {
-  if (preloaderHasFinished) return;
-  preloaderHasFinished = true;
-
-  const minimumDuration = prefersReducedMotion ? 0 : 1200;
-  const remainingDuration = Math.max(
-    0,
-    minimumDuration - (performance.now() - preloaderStartedAt),
-  );
+  if (preloaderFinished) return;
+  preloaderFinished = true;
+  const minimumDuration = prefersReducedMotion ? 0 : 650;
+  const remainingDuration = Math.max(0, minimumDuration - (performance.now() - preloaderStartedAt));
 
   window.setTimeout(() => {
-    if (preloaderFrameTimer) window.clearInterval(preloaderFrameTimer);
     document.body.classList.remove("is-loading");
-    document.documentElement.classList.add("is-ready");
-    window.requestAnimationFrame(() => initializeCardVideos(document));
-
+    startAllCardVideos();
     if (!sitePreloader) return;
     sitePreloader.classList.add("is-leaving");
-
-    const removePreloader = () => sitePreloader.remove();
-    sitePreloader.addEventListener("transitionend", removePreloader, {
-      once: true,
-    });
-    window.setTimeout(removePreloader, 600);
+    window.setTimeout(() => sitePreloader.remove(), 450);
   }, remainingDuration);
 }
 
-if (document.readyState === "complete") {
-  finishPreloader();
-} else {
-  window.addEventListener("load", finishPreloader, { once: true });
-}
-
-const emailContact = document.querySelector(".email-contact");
-const emailTrigger = document.querySelector(".email-trigger");
-
-function closeEmailBubble() {
-  if (!emailContact || !emailTrigger) return;
-  emailContact.classList.remove("is-open");
-  emailTrigger.setAttribute("aria-expanded", "false");
-}
-
-if (emailContact && emailTrigger) {
-  emailTrigger.addEventListener("click", () => {
-    const willOpen = !emailContact.classList.contains("is-open");
-    emailContact.classList.toggle("is-open", willOpen);
-    emailTrigger.setAttribute("aria-expanded", String(willOpen));
-  });
-
-  document.addEventListener("click", (event) => {
-    if (!emailContact.contains(event.target)) closeEmailBubble();
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      closeEmailBubble();
-      emailTrigger.focus();
-    }
-  });
-}
+if (document.readyState === "complete") finishPreloader();
+else window.addEventListener("load", finishPreloader, { once: true });
+window.setTimeout(finishPreloader, 1800);
 
 const collections = {
   projects: [
-    /*{
-      title: "Pardon",
-      description:
-        "Chrome extension website blocker requiring partner accountability.",
-    },*/
+    {
+      title: "Research Reach",
+      description: "Chrome extension research scraper sending automated, personalized cold emails.",
+
+      poster: "research-reach-poster.png",
+      tags: ["Full-stack development"],
+    },
     {
       title: "Morra Ai",
-      description:
-        "AI-powered practice app with live audio transcription, custom questions, and feedback for the IB French Individual Oral.",
-      video: "morra-ai.mp4",
+      description: "AI-powered practice app for the IB French Individual Oral.",
+
       poster: "morra-ai-poster.png",
-      url: "https://morrai-production.up.railway.app",
-      tags: ["Full-Stack Development", "Product Design"],
+      tags: ["Product design", "Full-stack development"],
     },
-    {title: "more coming soon!!"}
-  ], 
+  ],
   community: [
     {
       title: "HOSA Canada",
-      description:
-        "Managing workshops for 9,000+ students across Canada.",
+      description: "Managing programs and workshops for 11,000 students across Canada.",
       poster: "hosa-poster.png",
       url: "https://www.hosacanada.org",
-      tags: ["Project Management", "Education"],
+      tags: ["Project management", "Education"],
     },
     {
       title: "Ignite Fair",
-      description:
-        "Leading 18 executives to create in-person events for 800+ students in the GTA.",
+      description: "Leading 18 executives to create in-person events for 800+ students in the GTA.",
       poster: "ignite-fair.JPG",
       url: "https://www.ignitefair.org",
-      tags: ["Project Management", "Leadership"],
+      tags: ["Leadership", "Event management"],
     },
   ],
   "case-study": [
     {
       title: "YPB Case Study",
-      description:
-        "Market research and product decisions for Abercrombie's athleisure sub-brand, YPB. Ivey Horizon Case Competition Winner.",
+      description: "Market research and product decisions for Abercrombie's athleisure sub-brand, YPB. Ivey Horizon Case Competition Winner.",
       video: "case-competition.mp4",
       poster: "case-competition-poster.png",
-      tags: ["Product Strategy", "Market Research"],
+      tags: ["Product strategy", "Market research"],
     },
-  ],
-  graphics: [
-  
   ],
 };
 
 const faqItems = [
   {
     question: "what’s your go-to digicam?",
-    answer: "My Nikon Coolpix. I love the ethereal quality of the (sometimes blinding) flash. I bring it with me everywhere, and it's a haven of my favourite people and places.",
+    answer: "My Nikon Coolpix. I love the ethereal quality of the flash. I bring it everywhere—a haven of my favourite people and places.",
     photos: ["camera-1.png", "camera-2.png", "camera-3.png"],
   },
   {
     question: "something you’re proud of building?",
-    answer: "Aporia Literary Journal, a poetry and visual arts journal & community with works by incredibly talented young people across Canada. Check it out at",
-    answerLink: {
-      href: "https://www.aporialiterary.ca",
-      label: "aporialiterary.ca",
-    },
+    answer: "Aporia Literary Journal, a poetry and visual arts journal and community featuring talented young people across Canada. Explore it at",
+    answerLink: { href: "https://www.aporialiterary.ca", label: "aporialiterary.ca" },
     photos: ["aporia-1.png", "aporia-2.png", "aporia-3.png"],
   },
   {
     question: "best purchase?",
-    answer: "My Owala. It's truly one of my little joys in life and reminds me to #stayhydrated.",
+    answer: "My Owala. It’s truly one of my little joys in life and reminds me to stay hydrated.",
     photos: ["owala-1.png", "owala-2.png", "owala-3.png"],
   },
   {
-    question: "something you think more people should do?",
-    answer: "Lift weights with a focus on mobility and athleticism. It's an invaluable investment in long-term quality of life.",
+    question: "something more people should do?",
+    answer: "Lift weights with a focus on mobility and athleticism. It’s an invaluable investment in long-term quality of life.",
     photos: ["exercise-1.png", "exercise-2.png", "exercise-3.png"],
   },
   {
     question: "favourite art medium?",
-    answer: "Acrylic!! I love how fast-drying it is. Makes it super easy to layer colours and complete an artwork in one sitting.",
+    answer: "Acrylic. I love how fast-drying it is—it makes layering colours and finishing a work in one sitting easy.",
     photos: ["art-1.png", "art-2.png", "art-3.png"],
   },
-
 ];
 
-const graphicsSlides = [
-  "slides/4.png",
-  "slides/5.png",
-  "slides/6.png",
-  "slides/7.png",
-  "slides/8.png",
-  "slides/9.png",
-];
-
+const graphicsSlides = ["slides/4.png", "slides/5.png", "slides/6.png", "slides/7.png", "slides/8.png", "slides/9.png"];
 const panel = document.querySelector("#collection-panel");
 const projectCardTemplate = document.querySelector("#project-card-template");
 const tabs = [...document.querySelectorAll('[role="tab"]')];
-const tabsContainer = document.querySelector(".category-tabs");
-const placeholderLinks = [...document.querySelectorAll("[data-placeholder-link]")];
-const hero = document.querySelector(".hero");
-const heroDecor = document.querySelector(".hero-decor");
-const decorLight = heroDecor?.querySelector(".decor-light");
-const aboutDialog = document.querySelector("#about-dialog");
-const aboutTrigger = heroDecor?.querySelector(".decor-frame-2");
-const aboutClose = aboutDialog?.querySelector("[data-about-close]");
-let aboutOpenedWithKeyboard = false;
-const heroTextElements = [
-  ...document.querySelectorAll(".name-word, .intro, .bio p"),
-];
-const bioLines = [...document.querySelectorAll(".bio p")];
-const decorHoverImages = [
-  ...document.querySelectorAll(".hero-decor img[data-hover-src]"),
-];
-const narrowDecorShifts = [
-  [".decor-light", 0],
-  [".decor-rug", 20],
-  [".decor-cat", 25],
-  [".decor-frame-1", 68],
-  [".decor-frame-3", 58],
-  [".decor-frame-2", 62],
-  [".decor-shelf", 98],
-  [".decor-book-1", 108],
-  [".decor-book-2", 106],
-  [".decor-book-3", 104],
-  [".decor-shelf-plant", 107],
-  [".decor-plant", 170],
-].map(([selector, finalShift]) => ({
-  element: heroDecor?.querySelector(selector),
-  finalShift,
-}));
-const rotatingPhotos = faqItems.flatMap((item) => item.photos || []);
 let photoRotationTimer = null;
-let photoRotationIndex = 0;
-let heroLayoutFrame = null;
 
-bioLines.forEach((line, index) => {
-  line.style.setProperty("--bio-line-delay", `${560 + index * 90}ms`);
-});
+const singingIllustration = document.querySelector("[data-singing-animation]");
+const singingAnimationTrigger = document.querySelector(".hero-singer-wrap");
+const singingNote = document.querySelector(".singer-note");
+const singingAnimationFrames = [
+  "hero-singing-frame-1.png",
+  "hero-singing-frame-2.png",
+  "hero-singing-frame-3.png",
+  "hero-singing-frame-4.png",
+];
+const singingFrameSequence = [ 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3];
+let singingSequenceIndex = 0;
+let singingAnimationTimer = null;
+let singingFramesReady = false;
+let singingNoteFrame = null;
+let singingNotePoint = { x: 0, y: 0 };
+let singingHitMapWidth = 0;
+let singingHitMapHeight = 0;
+let singingHitMapMinimumX = null;
+let singingHitMapMaximumX = null;
 
-decorHoverImages.forEach((image) => {
-  const defaultSource = image.getAttribute("src");
-  const hoverSource = image.dataset.hoverSrc;
-  const isLight = image.classList.contains("decor-light");
-  let isLocked = false;
-  const preload = new Image();
-  preload.src = hoverSource;
+const hoverCardTriggers = [...document.querySelectorAll("[data-hover-card]")];
+const textHoverCard = document.createElement("div");
+const textHoverCardImage = document.createElement("img");
+const textHoverCardTitle = document.createElement("span");
+const textHoverCardCopy = document.createElement("span");
+let activeHoverCardTrigger = null;
+let hoverCardFrame = null;
+let hoverCardPoint = { x: 0, y: 0 };
 
-  const preserveImageBox = () => {
-    if (image.style.width && image.style.height) return;
-    const bounds = image.getBoundingClientRect();
-    image.style.width = `${bounds.width}px`;
-    image.style.height = `${bounds.height}px`;
-    image.style.objectFit = "contain";
-  };
+textHoverCard.className = "text-hover-card";
+textHoverCard.id = "text-hover-card";
+textHoverCard.setAttribute("role", "tooltip");
+textHoverCard.setAttribute("aria-hidden", "true");
+textHoverCardImage.className = "text-hover-card-image";
+textHoverCardImage.alt = "";
+textHoverCardTitle.className = "text-hover-card-title";
+textHoverCardCopy.className = "text-hover-card-copy";
+textHoverCard.append(textHoverCardImage, textHoverCardTitle, textHoverCardCopy);
+document.body.append(textHoverCard);
 
-  const showHoverImage = () => {
-    preserveImageBox();
-    image.src = hoverSource;
-  };
+function setHoverCardPosition(x, y) {
+  hoverCardPoint = { x, y };
+  if (hoverCardFrame) return;
 
-  const showDefaultImage = () => {
-    image.src = defaultSource;
-    image.style.removeProperty("width");
-    image.style.removeProperty("height");
-    image.style.removeProperty("object-fit");
-  };
+  hoverCardFrame = window.requestAnimationFrame(() => {
+    hoverCardFrame = null;
+    const offset = 18;
+    const gutter = 12;
+    const bounds = textHoverCard.getBoundingClientRect();
+    let nextX = hoverCardPoint.x + offset;
+    let nextY = hoverCardPoint.y + offset;
 
-  if (isLight) {
-    image.addEventListener("click", () => {
-      isLocked = !isLocked;
-      if (isLocked) {
-        showHoverImage();
-      } else {
-        showDefaultImage();
-      }
-    });
-  }
-
-  image.addEventListener("pointerenter", () => {
-    showHoverImage();
-    image.classList.add("is-hovered");
-  });
-
-  const endHover = () => {
-    image.classList.remove("is-hovered");
-    if (!isLocked) showDefaultImage();
-  };
-
-  image.addEventListener("pointerleave", endHover);
-  image.addEventListener("pointercancel", endHover);
-});
-
-function openAboutDialog() {
-  if (!aboutDialog || !aboutTrigger || aboutDialog.open) return;
-  aboutTrigger.setAttribute("aria-expanded", "true");
-
-  if (typeof aboutDialog.showModal === "function") {
-    aboutDialog.showModal();
-  } else {
-    aboutDialog.setAttribute("open", "");
-  }
-}
-
-function closeAboutDialog() {
-  if (!aboutDialog || !aboutDialog.open) return;
-  aboutDialog.close();
-}
-
-if (aboutDialog && aboutTrigger && aboutClose) {
-  aboutTrigger.addEventListener("click", (event) => {
-    aboutOpenedWithKeyboard = event.detail === 0;
-    openAboutDialog();
-  });
-  aboutTrigger.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    aboutOpenedWithKeyboard = true;
-    openAboutDialog();
-  });
-
-  aboutClose.addEventListener("click", closeAboutDialog);
-  aboutDialog.addEventListener("click", (event) => {
-    if (event.target === aboutDialog) closeAboutDialog();
-  });
-  aboutDialog.addEventListener("close", () => {
-    aboutTrigger.setAttribute("aria-expanded", "false");
-    if (aboutOpenedWithKeyboard) {
-      aboutTrigger.focus();
-    } else {
-      aboutTrigger.blur();
+    if (nextX + bounds.width > window.innerWidth - gutter) {
+      nextX = hoverCardPoint.x - bounds.width - offset;
     }
+    if (nextY + bounds.height > window.innerHeight - gutter) {
+      nextY = hoverCardPoint.y - bounds.height - offset;
+    }
+
+    nextX = Math.max(gutter, Math.min(nextX, window.innerWidth - bounds.width - gutter));
+    nextY = Math.max(gutter, Math.min(nextY, window.innerHeight - bounds.height - gutter));
+    textHoverCard.style.setProperty("--hover-card-x", `${nextX}px`);
+    textHoverCard.style.setProperty("--hover-card-y", `${nextY}px`);
   });
 }
 
-function getTextContentRight(element) {
-  const range = document.createRange();
-  range.selectNodeContents(element);
-  const bounds = range.getBoundingClientRect();
-  range.detach();
-  return bounds.right;
-}
-
-function layoutHeroDecor() {
-  if (!hero || !heroDecor || !heroTextElements.length) return;
-
-  const heroBounds = hero.getBoundingClientRect();
-  const textRight = Math.max(
-    ...heroTextElements.map(getTextContentRight),
-  ) - heroBounds.left;
-  const narrowProgress = Math.min(
-    1,
-    Math.max(0, (1100 - hero.clientWidth) / 250),
-  );
-  const isNarrowLayout = hero.clientWidth < 1100;
-  const isCompactLayout = hero.clientWidth < 850;
-  const decorLeft = isCompactLayout
-    ? hero.clientWidth * 0.64
-    : textRight + 10;
-  const availableWidth = Math.max(
-    0,
-    (hero.clientWidth - decorLeft - 50) / 1.06,
-  );
-  const responsiveWidth = isCompactLayout
-    ? Math.min(484.5, Math.max(345, hero.clientWidth * 1.5))
-    : isNarrowLayout
-      ? 500
-      : Math.max(0, hero.clientWidth - 550);
-  const heightLimitedWidth = hero.clientHeight * 0.73;
-  const decorWidth = Math.min(
-    798,
-    responsiveWidth,
-    isNarrowLayout ? Infinity : heightLimitedWidth,
-    isNarrowLayout ? Infinity : availableWidth,
-  );
-
-  heroDecor.style.left = `${decorLeft}px`;
-  heroDecor.style.width = `${decorWidth}px`;
-  if (decorLight) {
-    const decorHeight = decorWidth * (850 / 646);
-    const decorTop = (hero.clientHeight - decorHeight) / 2;
-    decorLight.style.top = `${5 - decorTop}px`;
-  }
-  narrowDecorShifts.forEach(({ element, finalShift }) => {
-    if (!element) return;
-    const compactShift = element.classList.contains("decor-cat")
-      ? 41
-      : element.classList.contains("decor-rug")
-        ? 17
-        : finalShift;
-    element.style.setProperty(
-      "--narrow-decor-shift",
-      `${narrowProgress * -(isCompactLayout ? compactShift * 1.5 : finalShift)}px`,
-    );
-  });
-}
-
-function requestHeroDecorLayout() {
-  window.cancelAnimationFrame(heroLayoutFrame);
-  heroLayoutFrame = window.requestAnimationFrame(layoutHeroDecor);
-}
-
-rotatingPhotos.forEach((source) => {
-  const photo = new Image();
-  photo.src = source;
-});
-
-placeholderLinks.forEach((link) => {
-  link.addEventListener("click", (event) => event.preventDefault());
-});
-
-const revealObserver = "IntersectionObserver" in window
-  ? new IntersectionObserver(
-      (entries, observer) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" },
-    )
-  : null;
-
-function observeReveal(element) {
-  if (!element) return;
-
-  if (revealObserver) {
-    revealObserver.observe(element);
+function showTextHoverCard(trigger, x, y) {
+  activeHoverCardTrigger = trigger;
+  const imageSource = trigger.dataset.hoverCardImage;
+  const isLinkCard = trigger.matches("a[href]");
+  textHoverCard.classList.toggle("is-link-card", isLinkCard);
+  textHoverCard.classList.toggle("has-image", Boolean(imageSource));
+  if (imageSource) {
+    textHoverCardImage.src = imageSource;
+    textHoverCardImage.alt = trigger.dataset.hoverCardImageAlt || "";
   } else {
-    element.classList.add("is-visible");
+    textHoverCardImage.removeAttribute("src");
+    textHoverCardImage.alt = "";
   }
+  textHoverCardTitle.textContent = trigger.dataset.hoverCardTitle || "";
+  textHoverCardCopy.textContent = trigger.dataset.hoverCard;
+
+  const background = trigger.dataset.hoverCardBg;
+  const color = trigger.dataset.hoverCardColor;
+  const requestedWidth = Number.parseFloat(trigger.dataset.hoverCardWidth);
+  textHoverCard.style.setProperty("--hover-card-bg", background && CSS.supports("color", background) ? background : "#e0ddd7");
+  textHoverCard.style.setProperty("--hover-card-color", color && CSS.supports("color", color) ? color : "#3f4b63");
+  textHoverCard.style.setProperty("--hover-card-width", `${Number.isFinite(requestedWidth) ? Math.min(360, Math.max(150, requestedWidth)) : 220}px`);
+  textHoverCard.classList.add("is-visible");
+  textHoverCard.setAttribute("aria-hidden", "false");
+  trigger.setAttribute("aria-describedby", textHoverCard.id);
+  setHoverCardPosition(x, y);
 }
 
-function observeProjectCards() {
-  panel.querySelectorAll(".project-card").forEach(observeReveal);
-  initializeCardVideos(panel);
+function hideTextHoverCard(trigger) {
+  if (activeHoverCardTrigger !== trigger) return;
+  activeHoverCardTrigger = null;
+  textHoverCard.classList.remove("is-visible");
+  textHoverCard.setAttribute("aria-hidden", "true");
+  trigger.removeAttribute("aria-describedby");
+}
+
+hoverCardTriggers.forEach((trigger) => {
+  trigger.addEventListener("pointerenter", (event) => {
+    if (event.pointerType === "touch") return;
+    showTextHoverCard(trigger, event.clientX, event.clientY);
+  });
+  trigger.addEventListener("pointermove", (event) => {
+    if (activeHoverCardTrigger === trigger) setHoverCardPosition(event.clientX, event.clientY);
+  });
+  trigger.addEventListener("pointerleave", () => hideTextHoverCard(trigger));
+  trigger.addEventListener("focus", () => {
+    const bounds = trigger.getBoundingClientRect();
+    showTextHoverCard(trigger, bounds.right, bounds.bottom);
+  });
+  trigger.addEventListener("blur", () => hideTextHoverCard(trigger));
+});
+
+function advanceSingingAnimation() {
+  if (!singingIllustration) return;
+  singingSequenceIndex = (singingSequenceIndex + 1) % singingFrameSequence.length;
+  singingIllustration.src = singingAnimationFrames[singingFrameSequence[singingSequenceIndex]];
+}
+
+function startSingingAnimation() {
+  if (
+    !singingIllustration
+    || !singingFramesReady
+    || singingAnimationTimer
+    || prefersReducedMotion
+    || document.hidden
+  ) return;
+
+  singingAnimationTimer = window.setInterval(advanceSingingAnimation, 1000 / 9);
+}
+
+function setSingingNotePosition(x, y) {
+  if (!singingNote) return;
+  singingNotePoint = { x, y };
+  if (singingNoteFrame) return;
+
+  singingNoteFrame = window.requestAnimationFrame(() => {
+    singingNoteFrame = null;
+    const gutter = 12;
+    const offset = 10;
+    const width = singingNote.offsetWidth;
+    const height = singingNote.offsetHeight;
+    let nextX = singingNotePoint.x + offset;
+    let nextY = singingNotePoint.y - height + offset;
+
+    if (nextX + width > window.innerWidth - gutter) {
+      nextX = singingNotePoint.x - width - offset;
+    }
+    if (nextY < gutter) nextY = singingNotePoint.y + offset * 2;
+
+    nextX = Math.max(gutter, Math.min(nextX, window.innerWidth - width - gutter));
+    nextY = Math.max(gutter, Math.min(nextY, window.innerHeight - height - gutter));
+    singingNote.style.setProperty("--singer-note-x", `${nextX}px`);
+    singingNote.style.setProperty("--singer-note-y", `${nextY}px`);
+  });
+}
+
+function prepareSingingHitMap() {
+  const source = singingAnimationFrames[0];
+  const image = new Image();
+
+  image.addEventListener("load", () => {
+    const scale = Math.min(1, 600 / image.naturalHeight);
+    singingHitMapWidth = Math.max(1, Math.round(image.naturalWidth * scale));
+    singingHitMapHeight = Math.max(1, Math.round(image.naturalHeight * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = singingHitMapWidth;
+    canvas.height = singingHitMapHeight;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    context.drawImage(image, 0, 0, singingHitMapWidth, singingHitMapHeight);
+    const pixels = context.getImageData(0, 0, singingHitMapWidth, singingHitMapHeight).data;
+    singingHitMapMinimumX = new Int32Array(singingHitMapHeight);
+    singingHitMapMaximumX = new Int32Array(singingHitMapHeight);
+    singingHitMapMinimumX.fill(singingHitMapWidth);
+    singingHitMapMaximumX.fill(-1);
+
+    for (let y = 0; y < singingHitMapHeight; y += 1) {
+      for (let x = 0; x < singingHitMapWidth; x += 1) {
+        if (pixels[((y * singingHitMapWidth) + x) * 4 + 3] < 24) continue;
+        singingHitMapMinimumX[y] = Math.min(singingHitMapMinimumX[y], x);
+        singingHitMapMaximumX[y] = Math.max(singingHitMapMaximumX[y], x);
+      }
+    }
+  }, { once: true });
+
+  image.src = source;
+}
+
+function isPointerOverSingingArtwork(clientX, clientY) {
+  if (!singingIllustration || !singingHitMapMinimumX || !singingHitMapMaximumX) return false;
+  const bounds = singingIllustration.getBoundingClientRect();
+  if (
+    clientX < bounds.left
+    || clientX > bounds.right
+    || clientY < bounds.top
+    || clientY > bounds.bottom
+  ) return false;
+
+  const x = Math.floor(((clientX - bounds.left) / bounds.width) * singingHitMapWidth);
+  const y = Math.min(
+    singingHitMapHeight - 1,
+    Math.max(0, Math.floor(((clientY - bounds.top) / bounds.height) * singingHitMapHeight)),
+  );
+  const padding = 3;
+  return x >= singingHitMapMinimumX[y] - padding && x <= singingHitMapMaximumX[y] + padding;
+}
+
+function updateSingingArtworkHover(event) {
+  if (!singingAnimationTrigger || event.pointerType === "touch") return;
+  const isOverArtwork = isPointerOverSingingArtwork(event.clientX, event.clientY);
+  singingAnimationTrigger.classList.toggle("is-image-hovered", isOverArtwork);
+  if (!isOverArtwork) return;
+  setSingingNotePosition(event.clientX, event.clientY);
+}
+
+function stopSingingAnimation() {
+  window.clearInterval(singingAnimationTimer);
+  singingAnimationTimer = null;
+}
+
+function preloadSingingAnimation() {
+  if (!singingIllustration) return;
+
+  Promise.all(singingAnimationFrames.map((source) => new Promise((resolve) => {
+    const frame = new Image();
+    frame.addEventListener("load", resolve, { once: true });
+    frame.addEventListener("error", resolve, { once: true });
+    frame.src = source;
+  }))).then(() => {
+    singingFramesReady = true;
+    startSingingAnimation();
+  });
+}
+
+if (singingAnimationTrigger) {
+  singingAnimationTrigger.addEventListener("pointerenter", updateSingingArtworkHover);
+  singingAnimationTrigger.addEventListener("pointermove", updateSingingArtworkHover);
+  singingAnimationTrigger.addEventListener("pointerleave", () => {
+    singingAnimationTrigger.classList.remove("is-image-hovered");
+  });
+  singingAnimationTrigger.addEventListener("focusin", () => {
+    const bounds = singingAnimationTrigger.getBoundingClientRect();
+    setSingingNotePosition(bounds.right, bounds.top + bounds.height / 2);
+  });
 }
 
 function playCardVideo(video) {
   if (!video.isConnected || document.hidden) return;
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
+  video.autoplay = true;
+  video.loop = true;
+  video.playsInline = true;
+
   const playback = video.play();
   if (playback) playback.catch(() => {});
 }
 
-const cardVideoObserver = "IntersectionObserver" in window
-  ? new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) playCardVideo(entry.target);
-        });
-      },
-      { threshold: 0.01 },
-    )
-  : null;
+function prepareCardVideo(video) {
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
+  video.autoplay = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.setAttribute("muted", "");
+  video.setAttribute("autoplay", "");
+  video.setAttribute("playsinline", "");
+  video.setAttribute("webkit-playsinline", "");
 
-function initializeCardVideos(container) {
-  container.querySelectorAll(".card-video").forEach((video) => {
-    video.muted = true;
-    video.defaultMuted = true;
-    video.autoplay = true;
-    video.loop = true;
-    video.playsInline = true;
-
-    if (video.dataset.autoplayReady === "true") {
-      playCardVideo(video);
-      return;
-    }
-
-    video.dataset.autoplayReady = "true";
-    video.addEventListener("canplay", () => playCardVideo(video), {
-      once: true,
-    });
-    cardVideoObserver?.observe(video);
-
-    if (video.readyState >= 2) {
-      playCardVideo(video);
-    } else {
-      video.load();
-    }
-
-    window.requestAnimationFrame(() => playCardVideo(video));
-    window.setTimeout(() => playCardVideo(video), 300);
-  });
+  if (video.dataset.autoplayPrepared === "true") return;
+  video.dataset.autoplayPrepared = "true";
+  video.addEventListener("loadeddata", () => playCardVideo(video));
+  video.addEventListener("canplay", () => playCardVideo(video));
 }
 
-function pauseCardVideos() {
-  panel.querySelectorAll(".card-video").forEach((video) => video.pause());
+function startAllCardVideos() {
+  panel.querySelectorAll(".card-video").forEach((video) => {
+    prepareCardVideo(video);
+    playCardVideo(video);
+  });
 }
 
 function renderProjectCards(items) {
   const cards = document.createDocumentFragment();
 
-  items.forEach((item, index) => {
-    const cardFragment = projectCardTemplate.content.cloneNode(true);
-    const card = cardFragment.querySelector(".project-card");
-    const media = cardFragment.querySelector("[data-card-media]");
-    const video = cardFragment.querySelector(".card-video");
-    const arrow = cardFragment.querySelector(".project-arrow");
-    const pills = cardFragment.querySelector("[data-card-pills]");
+  items.forEach((item) => {
+    const fragment = projectCardTemplate.content.cloneNode(true);
+    const card = fragment.querySelector(".project-card");
+    const media = fragment.querySelector("[data-card-media]");
+    const video = fragment.querySelector(".card-video");
+    const arrow = fragment.querySelector(".project-arrow");
+    const pills = fragment.querySelector("[data-card-pills]");
 
-    card.style.setProperty("--card-index", index);
+    fragment.querySelector("[data-card-title]").textContent = item.title;
+    fragment.querySelector("[data-card-description]").textContent = item.description;
+
     if (item.url) {
       card.href = item.url;
       card.setAttribute("aria-label", `Open ${item.title} in a new tab`);
@@ -497,9 +413,6 @@ function renderProjectCards(items) {
       card.removeAttribute("rel");
       arrow.remove();
     }
-    cardFragment.querySelector("[data-card-title]").textContent = item.title;
-    cardFragment.querySelector("[data-card-description]").textContent =
-      item.description;
 
     if (item.tags?.length) {
       item.tags.forEach((tag) => {
@@ -508,16 +421,12 @@ function renderProjectCards(items) {
         pill.textContent = tag;
         pills.append(pill);
       });
-    } else {
-      pills.remove();
-    }
+    } else pills.remove();
 
     if (item.video) {
-      media.classList.add("card-art-video");
-      media.setAttribute("aria-hidden", "false");
+      prepareCardVideo(video);
       video.src = item.video;
       video.setAttribute("aria-label", `${item.title} preview`);
-
       if (item.poster) video.poster = item.poster;
     } else if (item.poster) {
       const image = document.createElement("img");
@@ -527,159 +436,93 @@ function renderProjectCards(items) {
       video.replaceWith(image);
     } else {
       video.remove();
+      media.setAttribute("aria-hidden", "true");
     }
 
-    cards.append(cardFragment);
+    cards.append(fragment);
   });
 
   panel.replaceChildren(cards);
+  startAllCardVideos();
+  window.requestAnimationFrame(startAllCardVideos);
+  window.setTimeout(startAllCardVideos, 250);
+  window.setTimeout(startAllCardVideos, 750);
 }
 
 function escapeHTML(value) {
-  return value.replace(
-    /[&<>'"]/g,
-    (character) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        "'": "&#39;",
-        '"': "&quot;",
-      })[character],
-  );
+  return value.replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+  })[character]);
 }
 
 function faqAnswerHTML(item) {
   const answer = escapeHTML(item.answer);
-
   if (!item.answerLink) return answer;
-
-  return `${answer} <a class="faq-answer-link" href="${escapeHTML(item.answerLink.href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(item.answerLink.label)}</a>!`;
+  return `${answer} <a class="faq-answer-link" href="${escapeHTML(item.answerLink.href)}" target="_blank" rel="noopener noreferrer">${escapeHTML(item.answerLink.label)}</a>.`;
 }
 
 function faqTemplate() {
-  const questions = faqItems
-    .map(
-      (item, index) => `
-        <div class="faq-item" data-faq-index="${index}">
-          <button
-            class="faq-question"
-            type="button"
-            aria-expanded="false"
-            aria-controls="faq-answer-${index}"
-          >
-            <span>${escapeHTML(item.question)}</span>
-            <span class="faq-toggle" aria-hidden="true"></span>
-          </button>
-          <div class="faq-answer" id="faq-answer-${index}" aria-hidden="true">
-            <div class="faq-answer-inner">
-              <p>${faqAnswerHTML(item)}</p>
-            </div>
-          </div>
-        </div>
-      `,
-    )
-    .join("");
-
-  return `
-    <div class="ifaq-layout">
-      <div class="faq-list">${questions}</div>
-      <div class="ifaq-image" aria-hidden="true" hidden>
-        <img alt="">
+  const questions = faqItems.map((item, index) => `
+    <div class="faq-item" data-faq-index="${index}">
+      <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-${index}">
+        <span>${escapeHTML(item.question)}</span><span class="faq-toggle" aria-hidden="true"></span>
+      </button>
+      <div class="faq-answer" id="faq-answer-${index}" aria-hidden="true">
+        <div class="faq-answer-inner"><p>${faqAnswerHTML(item)}</p></div>
       </div>
     </div>
-  `;
+  `).join("");
+
+  return `<div class="ifaq-layout"><div class="faq-list">${questions}</div><div class="ifaq-image" aria-hidden="true" hidden><img alt=""></div></div>`;
 }
 
 function graphicsTemplate() {
-  const slides = graphicsSlides
-    .map(
-      (source, index) => `
-        <figure class="graphics-slide">
-          <img
-            src="${escapeHTML(source)}"
-            alt="Creative portfolio slide ${index + 1}"
-            ${index === 0 ? 'loading="eager"' : 'loading="lazy"'}
-            decoding="async"
-          >
-        </figure>
-      `,
-    )
-    .join("");
-
-  return `
-    <div
-      class="graphics-scroll"
-      tabindex="0"
-      role="region"
-      aria-label="Creative portfolio slides. Scroll horizontally to see more."
-    >
-      ${slides}
-    </div>
-  `;
+  return `<div class="graphics-scroll" tabindex="0" role="region" aria-label="Creative portfolio slides. Scroll horizontally to see more.">${graphicsSlides.map((source, index) => `
+    <figure class="graphics-slide"><img src="${escapeHTML(source)}" alt="Creative portfolio slide ${index + 1}" ${index === 0 ? 'loading="eager"' : 'loading="lazy"'}></figure>
+  `).join("")}</div>`;
 }
 
 function bindGraphicsScroll() {
   const scroller = panel.querySelector(".graphics-scroll");
   if (!scroller) return;
 
-  scroller.querySelectorAll(".graphics-slide img").forEach((image) => {
-    image.addEventListener(
-      "wheel",
-      (event) => {
-        if (event.deltaY === 0) return;
+  scroller.addEventListener("wheel", (event) => {
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
 
-        const multiplier = event.deltaMode === 1
-          ? 16
-          : event.deltaMode === 2
-            ? scroller.clientWidth
-            : 1;
+    const multiplier = event.deltaMode === 1
+      ? 16
+      : event.deltaMode === 2
+        ? scroller.clientWidth
+        : 1;
+    const distance = event.deltaY * multiplier;
+    const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+    const atStart = scroller.scrollLeft <= 0 && distance < 0;
+    const atEnd = scroller.scrollLeft >= maxScroll - 1 && distance > 0;
 
-        event.preventDefault();
-        scroller.scrollLeft += event.deltaX + event.deltaY * multiplier;
-      },
-      { passive: false },
-    );
-  });
+    if (maxScroll <= 0 || atStart || atEnd) return;
+
+    event.preventDefault();
+    scroller.scrollLeft += distance;
+  }, { passive: false });
 }
 
 function stopPhotoRotation() {
   window.clearInterval(photoRotationTimer);
   photoRotationTimer = null;
-
-  const image = panel.querySelector(".ifaq-image img");
-  if (!image) return;
-
-  image.classList.remove("is-rotating-photo");
-  image.removeAttribute("src");
 }
 
-function hideFAQImage() {
+function showFAQPhotos(sources) {
   stopPhotoRotation();
-
-  const imageCard = panel.querySelector(".ifaq-image");
-  if (imageCard) imageCard.hidden = true;
-}
-
-function startPhotoRotation(sources) {
-  stopPhotoRotation();
-
   const image = panel.querySelector(".ifaq-image img");
   if (!image || !sources?.length) return;
-
   image.closest(".ifaq-image").hidden = false;
-
-  photoRotationIndex = 0;
-  image.classList.add("is-rotating-photo");
-  image.src = sources[photoRotationIndex];
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
+  let index = 0;
+  image.src = sources[index];
+  if (prefersReducedMotion) return;
   photoRotationTimer = window.setInterval(() => {
-    photoRotationIndex = (photoRotationIndex + 1) % sources.length;
-    if (!image.isConnected) return;
-    image.src = sources[photoRotationIndex];
-  }, 600);
+    index = (index + 1) % sources.length;
+    if (image.isConnected) image.src = sources[index];
+  }, 900);
 }
 
 function bindFAQAccordions() {
@@ -689,39 +532,26 @@ function bindFAQAccordions() {
       const answer = item.querySelector(".faq-answer");
       const willOpen = !item.classList.contains("is-open");
 
-      if (willOpen) {
-        panel.querySelectorAll(".faq-item.is-open").forEach((openItem) => {
-          if (openItem === item) return;
-
-          openItem.classList.remove("is-open");
-          openItem
-            .querySelector(".faq-question")
-            .setAttribute("aria-expanded", "false");
-          openItem
-            .querySelector(".faq-answer")
-            .setAttribute("aria-hidden", "true");
-        });
-      }
+      panel.querySelectorAll(".faq-item.is-open").forEach((openItem) => {
+        openItem.classList.remove("is-open");
+        openItem.querySelector(".faq-question").setAttribute("aria-expanded", "false");
+        openItem.querySelector(".faq-answer").setAttribute("aria-hidden", "true");
+      });
 
       item.classList.toggle("is-open", willOpen);
       button.setAttribute("aria-expanded", String(willOpen));
       answer.setAttribute("aria-hidden", String(!willOpen));
 
-      const photoSet = faqItems[Number(item.dataset.faqIndex)].photos;
-      if (willOpen && photoSet) {
-        startPhotoRotation(photoSet);
-      } else if (willOpen) {
-        hideFAQImage();
-      } else {
-        hideFAQImage();
-      }
+      const imageCard = panel.querySelector(".ifaq-image");
+      if (willOpen) showFAQPhotos(faqItems[Number(item.dataset.faqIndex)].photos);
+      else if (imageCard) imageCard.hidden = true;
     });
   });
 }
 
 function showCollection(category, activeTab) {
   stopPhotoRotation();
-  pauseCardVideos();
+  panel.querySelectorAll("video").forEach((video) => video.pause());
   panel.classList.add("is-changing");
 
   window.setTimeout(() => {
@@ -732,25 +562,16 @@ function showCollection(category, activeTab) {
 
     if (isFAQ) {
       panel.innerHTML = faqTemplate();
+      bindFAQAccordions();
     } else if (isGraphics) {
       panel.innerHTML = graphicsTemplate();
-    } else {
-      renderProjectCards(collections[category]);
+      bindGraphicsScroll();
     }
+    else renderProjectCards(collections[category]);
 
     panel.setAttribute("aria-labelledby", activeTab.id);
     panel.classList.remove("is-changing");
-
-    if (isFAQ) {
-      bindFAQAccordions();
-      observeReveal(panel.querySelector(".ifaq-layout"));
-    } else if (isGraphics) {
-      bindGraphicsScroll();
-      observeReveal(panel.querySelector(".graphics-scroll"));
-    } else {
-      observeProjectCards();
-    }
-  }, 130);
+  }, prefersReducedMotion ? 0 : 130);
 }
 
 function activateTab(tab, moveFocus = false) {
@@ -759,49 +580,39 @@ function activateTab(tab, moveFocus = false) {
     candidate.setAttribute("aria-selected", String(isActive));
     candidate.tabIndex = isActive ? 0 : -1;
   });
-
   showCollection(tab.dataset.category, tab);
   if (moveFocus) tab.focus();
 }
 
 tabs.forEach((tab, index) => {
   tab.addEventListener("click", () => activateTab(tab));
-
   tab.addEventListener("keydown", (event) => {
     let targetIndex;
-
     if (event.key === "ArrowRight") targetIndex = (index + 1) % tabs.length;
-    if (event.key === "ArrowLeft") {
-      targetIndex = (index - 1 + tabs.length) % tabs.length;
-    }
+    if (event.key === "ArrowLeft") targetIndex = (index - 1 + tabs.length) % tabs.length;
     if (event.key === "Home") targetIndex = 0;
     if (event.key === "End") targetIndex = tabs.length - 1;
-
-    if (targetIndex !== undefined) {
-      event.preventDefault();
-      activateTab(tabs[targetIndex], true);
-    }
+    if (targetIndex === undefined) return;
+    event.preventDefault();
+    activateTab(tabs[targetIndex], true);
   });
 });
 
+window.addEventListener("load", startAllCardVideos, { once: true });
+window.addEventListener("pageshow", () => {
+  startAllCardVideos();
+  startSingingAnimation();
+});
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) initializeCardVideos(panel);
+  if (document.hidden) {
+    stopSingingAnimation();
+    return;
+  }
+
+  startAllCardVideos();
+  startSingingAnimation();
 });
 
-window.addEventListener("resize", requestHeroDecorLayout, { passive: true });
-window.addEventListener("load", requestHeroDecorLayout, { once: true });
-
-if ("ResizeObserver" in window && hero) {
-  const heroResizeObserver = new ResizeObserver(requestHeroDecorLayout);
-  heroResizeObserver.observe(hero);
-}
-
-if (document.fonts?.ready) {
-  document.fonts.ready.then(requestHeroDecorLayout);
-}
-
-layoutHeroDecor();
+prepareSingingHitMap();
+preloadSingingAnimation();
 renderProjectCards(collections.projects);
-observeReveal(tabsContainer);
-observeProjectCards();
-if (!sitePreloader) document.documentElement.classList.add("is-ready");

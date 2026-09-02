@@ -3,222 +3,84 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Harmony Chen's personal website."
-    />
-    <meta name="theme-color" content="#111d4f" />
+    <meta name="description" content="Harmony Chen — systems design engineering, product, design, and technology." />
+    <meta name="theme-color" content="#dcd9d2" />
     <meta property="og:title" content="Harmony Chen" />
-    <meta
-      property="og:description"
-      content="Harmony Chen's personal website."
-    />
+    <meta property="og:description" content="Systems design engineering, product, design, and technology." />
     <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Harmony Chen" />
     <title>Harmony Chen</title>
     <link rel="icon" href="favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="Untitled_Artwork.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;1,500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
   </head>
-  <body class="is-loading">
-    <div
-      class="site-preloader"
-      id="site-preloader"
-      role="status"
-      aria-live="polite"
-      aria-label="Website loading"
-    >
-      <div class="preloader-content">
-        <div class="preloader-art" aria-hidden="true">
-          <img
-            id="preloader-frame"
-            src="preloader-1.png"
-            alt=""
-            fetchpriority="high"
-          >
-        </div>
-        <p>loading...</p>
-      </div>
-    </div>
-    <noscript><style>.site-preloader{display:none}body.is-loading{overflow:auto}</style></noscript>
+  <body>
     <main>
       <section class="hero" aria-labelledby="page-title">
-        <nav class="social-links" aria-label="Social links">
-          <a class="social-link" href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <img src="social-linkedin.png" alt="" />
-          </a>
-          <a class="social-link" href="https://github.com/harmonyychen" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-            <img src="social-github.png" alt="" />
-          </a>
-          <a class="social-link" href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <img src="social-instagram.png" alt="" />
-          </a>
-          <div class="email-contact">
-            <button class="social-link email-trigger" type="button" aria-label="Show email address" aria-expanded="false" aria-controls="email-bubble">
-              <img src="social-email.png" alt="" />
-            </button>
-            <a class="email-bubble" id="email-bubble" target="_blank" rel="noopener noreferrer">h789chen@uwaterloo.ca</a>
+        <div class="page-shell hero-inner">
+          <div class="hero-characters" aria-label="Illustrations of Harmony's interests">
+            <!--<img src="hero-waving.png" alt="Harmony waving" />
+            <img src="hero-reading.png" alt="Harmony reading" /> -->
+            <span class="hero-singer-wrap" tabindex="0" aria-describedby="singer-note">
+              <span class="hero-singer">
+                <img src="hero-singing-frame-1.png" data-singing-animation alt="Harmony singing" />
+              </span>
+              <span class="singer-note" id="singer-note" role="tooltip">always down for an<br />impromptu karaoke sesh!</span>
+            </span>
+            <!--<img src="hero-tennis.png" alt="Harmony playing tennis" />-->
           </div>
-        </nav>
-
-        <div class="hero-inner">
-          <h1 id="page-title" aria-label="Harmony Chen">
-            <span class="name-word name-harmony">hi, i'm</span>
-            <span class="name-word name-chen">harmony!</span>
-          </h1>
-
-          <p class="intro motion-item">
-            <a class="bio-link" href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer">Systems Design Engineering @ UWaterloo</a>
+          <h1 id="page-title">Harmony Chen</h1>
+          <p class="intro">
+            Systems Design Engineering @
+            <a href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer" data-hover-card-title="University of Waterloo" data-hover-card="Systems Design Engineering in Waterloo, Ontario." data-hover-card-image="waterloo-hover.png" data-hover-card-image-alt="University of Waterloo Systems Design Engineering webpage" data-hover-card-width="250">University of Waterloo</a>;
+            building at the <em data-hover-card-title="Product × design × technology" data-hover-card-bg="#d9dde5">intersection</em> of product, design, and technology.
+            Currently managing programs for 11,000 students @
+            <a href="https://www.hosacanada.org" target="_blank" rel="noopener noreferrer" data-hover-card-title="HOSA Canada" data-hover-card="Programs and workshops for 11,000 students." data-hover-card-image="hosa-hover.png" data-hover-card-image-alt="HOSA Canada webpage" data-hover-card-width="250">HOSA Canada</a>
+            &amp; building community @
+            <a href="https://www.aporialiterary.ca" target="_blank" rel="noopener noreferrer" data-hover-card-title="Aporia Literary" data-hover-card="A literary journal and creative community." data-hover-card-image="aporia-hover.png" data-hover-card-image-alt="Aporia Literary Journal launch" data-hover-card-width="250">Aporia Literary Journal</a>.
+            Weaving stories into design that <em data-hover-card-title="connects" >connects</em>, leveraging product thinking into technology that <em data-hover-card-title="serves" data-hover-card-width="210">serves</em>, developing taste through <em data-hover-card-title="non-linear"  data-hover-card-bg="#d9dde5">non-linear</em> experiences.
           </p>
-
-          <div class="bio motion-item">
-            <div>
-              <p class="bio-label">currently:</p>
-              <p>> pursuing the intersection of technology, design, and product.</p>
-              <p>> managing projects for 11,000+ students @ <a class="bio-link" href="https://www.hosacanada.org" target="_blank" rel="noopener noreferrer">HOSA Canada</a></p>
-              <p>> seeking Summer 2027 internship opportunities</p>
-            </div>
-            <div>
-              <p class="bio-label">previously:</p>
-              <p>> small business owner, $4000 revenue &amp; $3000 entrepreneurship grant recipient @ <a class="bio-link" href="https://www.instagram.com/studio.reveries/" target="_blank" rel="noopener noreferrer">Reveries Studio</a></p>
-              <p>> top 10 international finalist at the largest high school career competitions in the world @ DECA, FBLA, HOSA  </p>
-            </div>
-          </div>
+          <p></p>
 
         </div>
-
-        <div class="hero-decor">
-          <img class="decor-light" src="decor-light.png" data-hover-src="decor-light-hover.png" alt="">
-          <img class="decor-frame decor-frame-1" src="decor-frame-1.png" alt="">
-          <img class="decor-frame decor-frame-2" src="decor-frame-2.png" data-hover-src="decor-frame-hover.png" role="button" tabindex="0" aria-label="Open about Harmony" aria-controls="about-dialog" aria-expanded="false" alt="">
-          <img class="decor-frame decor-frame-3" src="decor-frame-3.png" alt="">
-          <img class="decor-shelf" src="decor-shelf.png" alt="">
-          <img class="decor-book decor-book-1" src="decor-book-1.png" alt="">
-          <img class="decor-book decor-book-2" src="decor-book-2.png" alt="">
-          <img class="decor-book decor-book-3" src="decor-book-3.png" alt="">
-          <img class="decor-shelf-plant" src="decor-shelf-plant.png" alt="">
-          <img class="decor-rug" src="decor-rug.png" alt="">
-          <img class="decor-cat" src="decor-cat.png" data-hover-src="decor-cat-hover.png" alt="">
-          <img class="decor-plant" src="decor-plant.png" alt="">
-        </div>
-
-        <a class="scroll-slit" href="#work" aria-label="Scroll to selected work"></a>
       </section>
 
       <section class="work" id="work" aria-label="Selected work">
-        <div class="work-inner">
+        <div class="page-shell work-inner">
           <div class="category-tabs" role="tablist" aria-label="Portfolio categories">
-            <button
-              id="tab-projects"
-              type="button"
-              role="tab"
-              aria-selected="true"
-              aria-controls="collection-panel"
-              data-category="projects"
-              tabindex="0"
-            >
-              projects
-            </button>
-            <button
-              id="tab-community"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="collection-panel"
-              data-category="community"
-              tabindex="-1"
-            >
-              community
-            </button>
-            <button
-              id="tab-case-study"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="collection-panel"
-              data-category="case-study"
-              tabindex="-1"
-            >
-              case study
-            </button>
-            <button
-              id="tab-graphics"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="collection-panel"
-              data-category="graphics"
-              tabindex="-1"
-            >
-              graphics
-            </button>
-            <button
-              id="tab-ifaq"
-              type="button"
-              role="tab"
-              aria-selected="false"
-              aria-controls="collection-panel"
-              data-category="ifaq"
-              tabindex="-1"
-            >
-              ifaq
-            </button>
+            <button id="tab-projects" type="button" role="tab" aria-selected="true" aria-controls="collection-panel" data-category="projects" tabindex="0">projects</button>
+            <button id="tab-community" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="community" tabindex="-1">community</button>
+            <button id="tab-case-study" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="case-study" tabindex="-1">case study</button>
+            <button id="tab-graphics" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="graphics" tabindex="-1">graphics</button>
+            <button id="tab-ifaq" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="ifaq" tabindex="-1">ifaq</button>
           </div>
-
-          <div
-            class="collection-grid"
-            id="collection-panel"
-            role="tabpanel"
-            aria-labelledby="tab-projects"
-          ></div>
-
+          <div class="collection-grid" id="collection-panel" role="tabpanel" aria-labelledby="tab-projects"></div>
         </div>
       </section>
     </main>
 
-    <dialog class="about-dialog" id="about-dialog" aria-labelledby="about-dialog-title">
-      <article class="about-card">
-        <h2 class="visually-hidden" id="about-dialog-title">About Harmony</h2>
-        <button class="about-close" type="button" data-about-close aria-label="Close about Harmony">
-          <img src="about-close.png" alt="" />
-        </button>
-
-        <img class="about-portrait" src="about-portrait.png" alt="Harmony Chen outdoors" />
-
-        <div class="about-copy">
-          <p>Hey there, thanks for stopping by :)</p>
-          <p>My interest lies within being curious about the world—particularily how different communities and technology interact. I build at the intersection of software, design, and product.</p>
-          <p>Otherwise, catch me attempting to hit balls in tennis, harmonizing during karaoke, and whimsy-maxxing wherever I can. Life’s too short to be too serious.</p>
-        </div>
-      </article>
-    </dialog>
+    <footer class="site-footer">
+      <div class="page-shell footer-inner">
+        <p>Have any cool ideas, want to start an a cappella group together, or just want to chat? Let’s connect!</p>
+        <nav aria-label="Contact links">
+          <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:h789chen@uwaterloo.ca">Email</a>
+          <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </nav>
+      </div>
+    </footer>
 
     <template id="project-card-template">
       <a class="project-card" data-card-link target="_blank" rel="noopener noreferrer">
-        <div class="card-art" data-card-media aria-hidden="true">
-          <video
-            class="card-video"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-          >
-            Your browser does not support embedded video.
-          </video>
+        <div class="card-art" data-card-media>
+          <video class="card-video" autoplay muted loop playsinline webkit-playsinline preload="auto">Your browser does not support embedded video.</video>
           <div class="card-pills" data-card-pills aria-hidden="true"></div>
         </div>
-        <h2>
-          <span data-card-title></span>
-          <img
-            class="project-arrow"
-            src="arrow-up-right.png"
-            alt=""
-            aria-hidden="true"
-          >
-        </h2>
+        <h2><span data-card-title></span><img class="project-arrow" src="arrow-up-right.png" alt="" aria-hidden="true" /></h2>
         <p data-card-description></p>
       </a>
     </template>
