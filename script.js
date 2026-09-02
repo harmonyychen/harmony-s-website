@@ -27,14 +27,14 @@ const collections = {
     {
       title: "Research Reach",
       description: "Chrome extension research scraper sending automated, personalized cold emails.",
-
+      video: "research-reach-video.mov",
       poster: "research-reach-poster.png",
       tags: ["Full-stack development"],
     },
     {
       title: "Morra Ai",
       description: "AI-powered practice app for the IB French Individual Oral.",
-
+      video: "morra-ai.mp4",
       poster: "morra-ai-poster.png",
       tags: ["Product design", "Full-stack development"],
     },
