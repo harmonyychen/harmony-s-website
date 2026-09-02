@@ -27,14 +27,14 @@ const collections = {
     {
       title: "Research Reach",
       description: "Chrome extension research scraper sending automated, personalized cold emails.",
-      video: "research-reach-video.mov",
+      video: "research-reach-video-compatible.mp4",
       poster: "research-reach-poster.png",
       tags: ["Full-stack development"],
     },
     {
       title: "Morra Ai",
       description: "AI-powered practice app for the IB French Individual Oral.",
-      video: "morra-ai.mp4",
+      video: "morra-ai-compatible.mp4",
       poster: "morra-ai-poster.png",
       tags: ["Product design", "Full-stack development"],
     },
@@ -59,7 +59,7 @@ const collections = {
     {
       title: "YPB Case Study",
       description: "Market research and product decisions for Abercrombie's athleisure sub-brand, YPB. Ivey Horizon Case Competition Winner.",
-      video: "case-competition.mp4",
+      video: "case-competition-compatible.mp4",
       poster: "case-competition-poster.png",
       tags: ["Product strategy", "Market research"],
     },
@@ -425,9 +425,10 @@ function renderProjectCards(items) {
 
     if (item.video) {
       prepareCardVideo(video);
+      if (item.poster) video.poster = item.poster;
       video.src = item.video;
       video.setAttribute("aria-label", `${item.title} preview`);
-      if (item.poster) video.poster = item.poster;
+      video.load();
     } else if (item.poster) {
       const image = document.createElement("img");
       image.className = "card-image";
