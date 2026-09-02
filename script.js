@@ -616,4 +616,4 @@ document.addEventListener("visibilitychange", () => {
 
 prepareSingingHitMap();
 preloadSingingAnimation();
-renderProjectCards(collections.projects);
+renderProjectCards(collections.community);
