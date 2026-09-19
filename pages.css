@@ -141,11 +141,8 @@
   height: 100%;
 }
 
-.resume-content {
-  max-width: 580px;
-}
-
 .resume-content p {
+  max-width: 580px;
   margin: 0;
   color: var(--accent);
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
