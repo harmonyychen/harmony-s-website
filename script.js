@@ -28,12 +28,6 @@ themeToggle?.addEventListener("click", () => {
   applyTheme(nextTheme, true);
 });
 
-function revealProjectCard(card, observer) {
-  if (!card.isConnected) return;
-  card.classList.add("card-in-view");
-  observer?.unobserve(card);
-}
-
 function finishPreloader() {
   if (preloaderFinished) return;
   preloaderFinished = true;
@@ -131,39 +125,9 @@ const panel = document.querySelector("#collection-panel");
 const projectCardTemplate = document.querySelector("#project-card-template");
 const tabs = [...document.querySelectorAll('[role="tab"]')];
 let photoRotationTimer = null;
-let cardEntranceObserver = null;
 let cardVideoObserver = null;
 const cardVideoRetryTimers = new WeakMap();
 const cardVideoRetryDelays = [0, 200, 800, 2000];
-
-function observeCardEntrances() {
-  const cards = [...panel.querySelectorAll(".project-card")];
-  if (!cards.length || prefersReducedMotion) return;
-
-  if (!("IntersectionObserver" in window)) {
-    cards.forEach((card) => card.classList.add("card-in-view"));
-    return;
-  }
-
-  cardEntranceObserver?.disconnect();
-  cards.forEach((card, index) => {
-    card.classList.add("card-awaiting-entry");
-    card.style.setProperty("--card-index", index);
-  });
-
-  cardEntranceObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-
-      revealProjectCard(entry.target, observer);
-    });
-  }, {
-    threshold: 0.16,
-    rootMargin: "0px 0px -6%",
-  });
-
-  cards.forEach((card) => cardEntranceObserver.observe(card));
-}
 
 const singingIllustration = document.querySelector("[data-singing-animation]");
 const singingAnimationTrigger = document.querySelector(".hero-singer-wrap");
@@ -678,7 +642,6 @@ function renderProjectCards(items) {
   });
 
   panel.replaceChildren(cards);
-  observeCardEntrances();
   startAllCardVideos();
 }
 
@@ -784,7 +747,6 @@ function bindFAQAccordions() {
 
 function showCollection(category, activeTab) {
   stopPhotoRotation();
-  cardEntranceObserver?.disconnect();
   cardVideoObserver?.disconnect();
   cardVideoObserver = null;
   panel.querySelectorAll("video").forEach((video) => {
