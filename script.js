@@ -5,16 +5,6 @@ let preloaderFinished = false;
 
 const themeToggle = document.querySelector(".theme-toggle");
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-function storedTheme() {
-  try {
-    const theme = localStorage.getItem("harmony-theme");
-    return theme === "dark" || theme === "light" ? theme : null;
-  } catch {
-    return null;
-  }
-}
 
 function applyTheme(theme, persist = false) {
   const isDark = theme === "dark";
@@ -31,24 +21,37 @@ function applyTheme(theme, persist = false) {
   }
 }
 
-applyTheme(document.documentElement.dataset.theme || (systemThemeQuery.matches ? "dark" : "light"));
+applyTheme(document.documentElement.dataset.theme || "light");
 
 themeToggle?.addEventListener("click", () => {
   const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   applyTheme(nextTheme, true);
 });
 
-const syncWithSystemTheme = (event) => {
-  if (!storedTheme()) applyTheme(event.matches ? "dark" : "light");
-};
-
-if (systemThemeQuery.addEventListener) systemThemeQuery.addEventListener("change", syncWithSystemTheme);
-else systemThemeQuery.addListener(syncWithSystemTheme);
-
 const heroCopy = document.querySelector(".hero-copy");
 const categoryTabs = document.querySelector(".category-tabs");
 const heroLineStagger = 140;
 const heroLineDuration = 600;
+let projectButtonsReady = prefersReducedMotion;
+const pendingCardEntrances = new Map();
+
+function revealProjectCard(card, observer) {
+  if (!card.isConnected) return;
+  card.classList.add("card-in-view");
+  observer?.unobserve(card);
+}
+
+function completeProjectButtonsEntrance() {
+  if (projectButtonsReady) return;
+  projectButtonsReady = true;
+
+  pendingCardEntrances.forEach((observer, card) => revealProjectCard(card, observer));
+  pendingCardEntrances.clear();
+}
+
+categoryTabs?.addEventListener("animationend", (event) => {
+  if (event.animationName === "hero-buttons-entry") completeProjectButtonsEntrance();
+});
 
 function wrapHeroWords(textNode) {
   const parts = textNode.textContent.split(/(\s+)/);
@@ -88,6 +91,7 @@ function setHeroLineIndexes() {
 
   const tabsDelay = Math.max(0, ((lineTops.length - 1) * heroLineStagger) + heroLineDuration);
   categoryTabs?.style.setProperty("--tabs-delay", `${tabsDelay}ms`);
+  window.setTimeout(completeProjectButtonsEntrance, tabsDelay + 650);
 }
 
 function prepareHeroEntrance() {
@@ -213,6 +217,8 @@ const tabs = [...document.querySelectorAll('[role="tab"]')];
 let photoRotationTimer = null;
 let cardEntranceObserver = null;
 let cardVideoObserver = null;
+const cardVideoRetryTimers = new WeakMap();
+const cardVideoRetryDelays = [0, 200, 800, 2000];
 
 function observeCardEntrances() {
   const cards = [...panel.querySelectorAll(".project-card")];
@@ -231,9 +237,17 @@ function observeCardEntrances() {
 
   cardEntranceObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("card-in-view");
-      observer.unobserve(entry.target);
+      if (!entry.isIntersecting) {
+        pendingCardEntrances.delete(entry.target);
+        return;
+      }
+
+      if (!projectButtonsReady) {
+        pendingCardEntrances.set(entry.target, observer);
+        return;
+      }
+
+      revealProjectCard(entry.target, observer);
     });
   }, {
     threshold: 0.16,
@@ -494,55 +508,88 @@ if (singingAnimationTrigger) {
   });
 }
 
+function clearCardVideoRetry(video) {
+  const timer = cardVideoRetryTimers.get(video);
+  if (timer !== undefined) window.clearTimeout(timer);
+  cardVideoRetryTimers.delete(video);
+}
+
+function markCardVideoPlaying(video) {
+  clearCardVideoRetry(video);
+  video.dataset.autoplayRetry = "0";
+  video.removeAttribute("data-autoplay-pending");
+}
+
+function queueCardVideoPlayback(video, resetRetry = false) {
+  if (!video.isConnected || video.dataset.autoplayDisabled === "true") return;
+  if (!video.paused && !video.ended) {
+    markCardVideoPlaying(video);
+    return;
+  }
+
+  if (resetRetry) video.dataset.autoplayRetry = "0";
+  const retryIndex = Number(video.dataset.autoplayRetry || 0);
+  if (retryIndex >= cardVideoRetryDelays.length) return;
+
+  clearCardVideoRetry(video);
+  video.dataset.autoplayRetry = String(retryIndex + 1);
+  const timer = window.setTimeout(() => {
+    cardVideoRetryTimers.delete(video);
+    playCardVideo(video);
+  }, cardVideoRetryDelays[retryIndex]);
+  cardVideoRetryTimers.set(video, timer);
+}
+
 function playCardVideo(video) {
-  if (!video.isConnected || document.hidden) return;
-  if ("IntersectionObserver" in window && video.dataset.inViewport !== "true") return;
+  if (!video.isConnected || video.dataset.autoplayDisabled === "true") return;
 
   video.muted = true;
   video.defaultMuted = true;
-  video.volume = 0;
   video.autoplay = true;
   video.loop = true;
   video.playsInline = true;
   video.controls = false;
 
-  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
-
-  const playback = video.play();
-  if (playback) {
-    playback.then(() => {
-      video.removeAttribute("data-autoplay-pending");
-    }).catch(() => {
-      video.dataset.autoplayPending = "true";
-    });
-  }
-}
-
-function observeCardVideo(video) {
-  if (!("IntersectionObserver" in window)) {
-    video.dataset.inViewport = "true";
-    playCardVideo(video);
+  if (!video.paused && !video.ended) {
+    markCardVideoPlaying(video);
     return;
   }
 
+  video.dataset.autoplayPending = "true";
+  let playback;
+
+  try {
+    playback = video.play();
+  } catch {
+    queueCardVideoPlayback(video);
+    return;
+  }
+
+  // Older Safari versions return undefined instead of a promise.
+  if (!playback) {
+    queueCardVideoPlayback(video);
+    return;
+  }
+
+  playback.then(() => {
+    markCardVideoPlaying(video);
+  }).catch(() => {
+    video.dataset.autoplayPending = "true";
+    queueCardVideoPlayback(video);
+  });
+}
+
+function observeCardVideo(video) {
+  if (video.dataset.autoplayObserved === "true") return;
+  video.dataset.autoplayObserved = "true";
+
+  if (!("IntersectionObserver" in window)) return;
   if (!cardVideoObserver) {
     cardVideoObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        const observedVideo = entry.target;
-        observedVideo.dataset.inViewport = String(entry.isIntersecting);
-
-        if (!entry.isIntersecting) {
-          observedVideo.pause();
-          return;
-        }
-
-        playCardVideo(observedVideo);
-        window.setTimeout(() => playCardVideo(observedVideo), 120);
-        window.setTimeout(() => playCardVideo(observedVideo), 500);
+        if (entry.isIntersecting) queueCardVideoPlayback(entry.target, true);
       });
-    }, {
-      threshold: 0.05,
-    });
+    }, { rootMargin: "120px 0px", threshold: 0.01 });
   }
 
   cardVideoObserver.observe(video);
@@ -551,7 +598,6 @@ function observeCardVideo(video) {
 function prepareCardVideo(video) {
   video.muted = true;
   video.defaultMuted = true;
-  video.volume = 0;
   video.autoplay = true;
   video.loop = true;
   video.playsInline = true;
@@ -568,19 +614,26 @@ function prepareCardVideo(video) {
   video.setAttribute("disablepictureinpicture", "");
   video.setAttribute("disableremoteplayback", "");
   video.setAttribute("x-webkit-airplay", "deny");
+  video.setAttribute("tabindex", "-1");
+  video.setAttribute("aria-hidden", "true");
   video.removeAttribute("controls");
 
   if (video.dataset.autoplayPrepared === "true") return;
   video.dataset.autoplayPrepared = "true";
-  video.addEventListener("loadedmetadata", () => playCardVideo(video));
-  video.addEventListener("loadeddata", () => playCardVideo(video));
-  video.addEventListener("canplay", () => playCardVideo(video));
+  video.addEventListener("loadedmetadata", () => queueCardVideoPlayback(video, true));
+  video.addEventListener("loadeddata", () => queueCardVideoPlayback(video, true));
+  video.addEventListener("canplay", () => queueCardVideoPlayback(video, true));
+  video.addEventListener("playing", () => markCardVideoPlaying(video));
+  video.addEventListener("pause", () => {
+    if (!document.hidden) queueCardVideoPlayback(video, true);
+  });
 }
 
 function startAllCardVideos() {
   panel.querySelectorAll(".card-video").forEach((video) => {
     prepareCardVideo(video);
     observeCardVideo(video);
+    queueCardVideoPlayback(video, true);
   });
 }
 
@@ -620,7 +673,6 @@ function renderProjectCards(items) {
       prepareCardVideo(video);
       if (item.poster) video.poster = item.poster;
       video.src = item.video;
-      video.setAttribute("aria-label", `${item.title} preview`);
     } else if (item.poster) {
       const image = document.createElement("img");
       image.className = "card-image";
@@ -747,7 +799,13 @@ function showCollection(category, activeTab) {
   stopPhotoRotation();
   cardEntranceObserver?.disconnect();
   cardVideoObserver?.disconnect();
-  panel.querySelectorAll("video").forEach((video) => video.pause());
+  cardVideoObserver = null;
+  pendingCardEntrances.clear();
+  panel.querySelectorAll("video").forEach((video) => {
+    video.dataset.autoplayDisabled = "true";
+    clearCardVideoRetry(video);
+    video.pause();
+  });
   panel.classList.add("is-changing");
 
   window.setTimeout(() => {
@@ -799,6 +857,10 @@ window.addEventListener("pageshow", () => {
   startAllCardVideos();
   startSingingAnimation();
 });
+window.addEventListener("focus", startAllCardVideos);
+document.addEventListener("pointerdown", startAllCardVideos, { capture: true, passive: true });
+document.addEventListener("touchstart", startAllCardVideos, { capture: true, passive: true });
+document.addEventListener("keydown", startAllCardVideos, { capture: true });
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     stopSingingAnimation();

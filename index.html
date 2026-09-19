@@ -19,8 +19,7 @@
       (() => {
         try {
           const savedTheme = localStorage.getItem("harmony-theme");
-          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+          document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : "light";
         } catch {
           document.documentElement.dataset.theme = "light";
         }
@@ -30,10 +29,17 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-      <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
-      <img class="theme-icon theme-icon-sun" src="theme-sun.png" alt="" aria-hidden="true" />
-    </button>
+    <header class="top-actions">
+      <nav class="social-links" aria-label="Contact links">
+        <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="mailto:h789chen@uwaterloo.ca">Email</a>
+        <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
+        <img class="theme-icon theme-icon-sun" src="theme-sun.png" alt="" aria-hidden="true" />
+      </button>
+    </header>
     <main>
       <section class="hero" aria-labelledby="page-title">
         <div class="page-shell hero-inner">
@@ -80,21 +86,10 @@
       </section>
     </main>
 
-    <footer class="site-footer">
-      <div class="page-shell footer-inner">
-        <p>Have any cool ideas, want to start an a cappella group together, or just want to chat? Let’s connect!</p>
-        <nav aria-label="Contact links">
-          <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="mailto:h789chen@uwaterloo.ca">Email</a>
-          <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
-        </nav>
-      </div>
-    </footer>
-
     <template id="project-card-template">
       <a class="project-card" data-card-link target="_blank" rel="noopener noreferrer">
         <div class="card-art" data-card-media>
-          <video class="card-video" autoplay muted loop playsinline webkit-playsinline preload="auto">Your browser does not support embedded video.</video>
+          <video class="card-video" autoplay muted loop playsinline webkit-playsinline preload="auto" tabindex="-1" aria-hidden="true" disablepictureinpicture disableremoteplayback>Your browser does not support embedded video.</video>
           <div class="card-pills" data-card-pills aria-hidden="true"></div>
         </div>
         <h2><span data-card-title></span><img class="project-arrow" src="arrow-up-right.png" alt="" aria-hidden="true" /></h2>
