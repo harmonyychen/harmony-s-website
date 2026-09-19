@@ -142,15 +142,15 @@ const collections = {
     {
       title: "Research Reach",
       description: "Chrome extension research scraper sending automated, personalized cold emails.",
-      video: "research-reach-video-compatible.mp4",
       poster: "research-reach-poster.png",
+      githubUrl: "https://github.com/harmonyychen/research-reach",
       tags: ["Full-stack development"],
     },
     {
       title: "Morra Ai",
       description: "AI-powered practice app for the IB French Individual Oral.",
-      video: "morra-ai-compatible.mp4",
       poster: "morra-ai-poster.png",
+      githubUrl: "https://github.com/The4Caster13/MorraAI",
       tags: ["Product design", "Full-stack development"],
     },
   ],
@@ -303,7 +303,7 @@ function setHoverCardPosition(x, y) {
 
   hoverCardFrame = window.requestAnimationFrame(() => {
     hoverCardFrame = null;
-    const offset = 18;
+    const offset = activeHoverCardTrigger?.dataset.hoverCardShape === "circle" ? 0 : 18;
     const gutter = 12;
     const bounds = textHoverCard.getBoundingClientRect();
     let nextX = hoverCardPoint.x + offset;
@@ -327,7 +327,9 @@ function showTextHoverCard(trigger, x, y) {
   activeHoverCardTrigger = trigger;
   const imageSource = trigger.dataset.hoverCardImage;
   const isLinkCard = trigger.matches("a[href]");
+  const isPortraitCard = trigger.dataset.hoverCardShape === "circle";
   textHoverCard.classList.toggle("is-link-card", isLinkCard);
+  textHoverCard.classList.toggle("is-portrait-card", isPortraitCard);
   textHoverCard.classList.toggle("has-image", Boolean(imageSource));
   if (imageSource) {
     textHoverCardImage.src = imageSource;
@@ -518,10 +520,13 @@ function markCardVideoPlaying(video) {
   clearCardVideoRetry(video);
   video.dataset.autoplayRetry = "0";
   video.removeAttribute("data-autoplay-pending");
+  video.closest(".card-art")?.classList.add("video-is-playing");
 }
 
 function queueCardVideoPlayback(video, resetRetry = false) {
   if (!video.isConnected || video.dataset.autoplayDisabled === "true") return;
+  if (video.dataset.inViewport !== "true" || document.hidden) return;
+  if (video.dataset.videoLoaded !== "true") return;
   if (!video.paused && !video.ended) {
     markCardVideoPlaying(video);
     return;
@@ -542,6 +547,7 @@ function queueCardVideoPlayback(video, resetRetry = false) {
 
 function playCardVideo(video) {
   if (!video.isConnected || video.dataset.autoplayDisabled === "true") return;
+  if (video.dataset.inViewport !== "true" || document.hidden) return;
 
   video.muted = true;
   video.defaultMuted = true;
@@ -579,17 +585,45 @@ function playCardVideo(video) {
   });
 }
 
+function loadCardVideo(video) {
+  if (video.dataset.videoLoaded === "true" || !video.dataset.src) return;
+  video.dataset.videoLoaded = "true";
+  video.preload = "auto";
+  video.setAttribute("preload", "auto");
+  video.src = video.dataset.src;
+  video.load();
+}
+
+function activateCardVideo(video) {
+  loadCardVideo(video);
+  queueCardVideoPlayback(video, true);
+}
+
 function observeCardVideo(video) {
   if (video.dataset.autoplayObserved === "true") return;
   video.dataset.autoplayObserved = "true";
 
-  if (!("IntersectionObserver" in window)) return;
+  if (!("IntersectionObserver" in window)) {
+    video.dataset.inViewport = "true";
+    activateCardVideo(video);
+    return;
+  }
   if (!cardVideoObserver) {
     cardVideoObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) queueCardVideoPlayback(entry.target, true);
+        const observedVideo = entry.target;
+        const isFullyVisible = entry.isIntersecting && entry.intersectionRatio >= 1;
+        observedVideo.dataset.inViewport = String(isFullyVisible);
+
+        if (isFullyVisible) {
+          activateCardVideo(observedVideo);
+          return;
+        }
+
+        clearCardVideoRetry(observedVideo);
+        if (!observedVideo.paused) observedVideo.pause();
       });
-    }, { rootMargin: "120px 0px", threshold: 0.01 });
+    }, { rootMargin: "0px", threshold: 1 });
   }
 
   cardVideoObserver.observe(video);
@@ -602,13 +636,13 @@ function prepareCardVideo(video) {
   video.loop = true;
   video.playsInline = true;
   video.controls = false;
-  video.preload = "auto";
+  video.preload = video.dataset.videoLoaded === "true" ? "auto" : "none";
   video.disablePictureInPicture = true;
   video.disableRemotePlayback = true;
   video.setAttribute("muted", "");
   video.setAttribute("autoplay", "");
   video.setAttribute("loop", "");
-  video.setAttribute("preload", "auto");
+  video.setAttribute("preload", video.dataset.videoLoaded === "true" ? "auto" : "none");
   video.setAttribute("playsinline", "");
   video.setAttribute("webkit-playsinline", "");
   video.setAttribute("disablepictureinpicture", "");
@@ -625,7 +659,9 @@ function prepareCardVideo(video) {
   video.addEventListener("canplay", () => queueCardVideoPlayback(video, true));
   video.addEventListener("playing", () => markCardVideoPlaying(video));
   video.addEventListener("pause", () => {
-    if (!document.hidden) queueCardVideoPlayback(video, true);
+    if (!document.hidden && video.dataset.inViewport === "true") {
+      queueCardVideoPlayback(video, true);
+    }
   });
 }
 
@@ -633,7 +669,7 @@ function startAllCardVideos() {
   panel.querySelectorAll(".card-video").forEach((video) => {
     prepareCardVideo(video);
     observeCardVideo(video);
-    queueCardVideoPlayback(video, true);
+    if (video.dataset.inViewport === "true") activateCardVideo(video);
   });
 }
 
@@ -642,23 +678,35 @@ function renderProjectCards(items) {
 
   items.forEach((item) => {
     const fragment = projectCardTemplate.content.cloneNode(true);
-    const card = fragment.querySelector(".project-card");
+    let card = fragment.querySelector(".project-card");
     const media = fragment.querySelector("[data-card-media]");
     const video = fragment.querySelector(".card-video");
+    const poster = fragment.querySelector("[data-card-poster]");
     const arrow = fragment.querySelector(".project-arrow");
+    const githubLink = fragment.querySelector("[data-card-github]");
     const pills = fragment.querySelector("[data-card-pills]");
 
     fragment.querySelector("[data-card-title]").textContent = item.title;
     fragment.querySelector("[data-card-description]").textContent = item.description;
 
     if (item.url) {
-      card.href = item.url;
-      card.setAttribute("aria-label", `Open ${item.title} in a new tab`);
+      const cardLink = document.createElement("a");
+      cardLink.className = card.className;
+      cardLink.href = item.url;
+      cardLink.target = "_blank";
+      cardLink.rel = "noopener noreferrer";
+      cardLink.setAttribute("aria-label", `Open ${item.title} in a new tab`);
+      cardLink.append(...card.childNodes);
+      card.replaceWith(cardLink);
+      card = cardLink;
     } else {
-      card.removeAttribute("target");
-      card.removeAttribute("rel");
       arrow.remove();
     }
+
+    if (item.githubUrl && !item.url) {
+      githubLink.href = item.githubUrl;
+      githubLink.setAttribute("aria-label", `View ${item.title} on GitHub`);
+    } else githubLink.remove();
 
     if (item.tags?.length) {
       item.tags.forEach((tag) => {
@@ -671,16 +719,18 @@ function renderProjectCards(items) {
 
     if (item.video) {
       prepareCardVideo(video);
-      if (item.poster) video.poster = item.poster;
-      video.src = item.video;
+      video.dataset.src = item.video;
+      if (item.poster) {
+        poster.src = item.poster;
+        video.poster = item.poster;
+      } else poster.remove();
     } else if (item.poster) {
-      const image = document.createElement("img");
-      image.className = "card-image";
-      image.src = item.poster;
-      image.alt = "";
-      video.replaceWith(image);
+      poster.classList.remove("card-video-poster");
+      poster.src = item.poster;
+      video.remove();
     } else {
       video.remove();
+      poster.remove();
       media.setAttribute("aria-hidden", "true");
     }
 
@@ -690,9 +740,6 @@ function renderProjectCards(items) {
   panel.replaceChildren(cards);
   observeCardEntrances();
   startAllCardVideos();
-  window.requestAnimationFrame(startAllCardVideos);
-  window.setTimeout(startAllCardVideos, 250);
-  window.setTimeout(startAllCardVideos, 750);
 }
 
 function escapeHTML(value) {

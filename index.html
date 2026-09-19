@@ -55,7 +55,7 @@
             <!--<img src="hero-tennis.png" alt="Harmony playing tennis" />-->
           </div>
           <div class="hero-copy">
-            <h1 id="page-title">Harmony Chen</h1>
+            <h1 id="page-title" tabindex="0" data-hover-card="" data-hover-card-image="harmony-hover.png" data-hover-card-image-alt="Portrait of Harmony Chen" data-hover-card-width="190" data-hover-card-shape="circle">Harmony Chen</h1>
             <p class="intro">
               Systems Design Engineering @
               <a href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer" data-hover-card-title="University of Waterloo" data-hover-card="Systems Design Engineering in Waterloo, Ontario." data-hover-card-image="waterloo-hover.png" data-hover-card-image-alt="University of Waterloo Systems Design Engineering webpage" data-hover-card-width="250">University of Waterloo</a>;
@@ -87,14 +87,21 @@
     </main>
 
     <template id="project-card-template">
-      <a class="project-card" data-card-link target="_blank" rel="noopener noreferrer">
+      <article class="project-card" data-card>
         <div class="card-art" data-card-media>
-          <video class="card-video" autoplay muted loop playsinline webkit-playsinline preload="auto" tabindex="-1" aria-hidden="true" disablepictureinpicture disableremoteplayback>Your browser does not support embedded video.</video>
+          <video class="card-video" autoplay muted loop playsinline webkit-playsinline preload="none" tabindex="-1" aria-hidden="true" disablepictureinpicture disableremoteplayback>Your browser does not support embedded video.</video>
+          <img class="card-image card-video-poster" data-card-poster alt="" aria-hidden="true" decoding="async" />
           <div class="card-pills" data-card-pills aria-hidden="true"></div>
         </div>
-        <h2><span data-card-title></span><img class="project-arrow" src="arrow-up-right.png" alt="" aria-hidden="true" /></h2>
+        <h2>
+          <span class="project-heading-label"><span data-card-title></span><img class="project-arrow" src="arrow-up-right.png" alt="" aria-hidden="true" /></span>
+          <a class="project-github" data-card-github target="_blank" rel="noopener noreferrer">
+            <img class="project-github-icon project-github-icon-light" src="github.png" alt="" aria-hidden="true" />
+            <img class="project-github-icon project-github-icon-dark" src="github-dark.png" alt="" aria-hidden="true" />
+          </a>
+        </h2>
         <p data-card-description></p>
-      </a>
+      </article>
     </template>
   </body>
 </html>

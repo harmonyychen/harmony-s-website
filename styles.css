@@ -355,6 +355,16 @@ h1 {
   border: 0;
 }
 
+.text-hover-card.is-portrait-card {
+  width: min(var(--hover-card-width), calc(100vw - 24px));
+  height: min(var(--hover-card-width), calc(100vw - 24px));
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  box-shadow: none;
+}
+
 .text-hover-card-image {
   display: none;
   width: 100%;
@@ -429,6 +439,7 @@ h1 {
 
 .category-tabs button:focus-visible,
 .project-card:focus-visible,
+.project-github:focus-visible,
 .graphics-scroll:focus-visible,
 .faq-question:focus-visible,
 .social-links a:focus-visible {
@@ -488,8 +499,23 @@ h1 {
 }
 
 .card-video {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
   -webkit-appearance: none;
+}
+
+.card-video-poster {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease, visibility 0s linear 140ms;
+}
+
+.card-art.video-is-playing .card-video-poster {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .card-video::-webkit-media-controls {
@@ -582,11 +608,46 @@ h1 {
 
 .project-card h2 {
   display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin: 0;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 4px;
   line-height: 1.35;
 }
+
+.project-heading-label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.project-github {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-left: auto;
+  place-items: center;
+  transition: transform 160ms ease;
+}
+
+.project-github:hover {
+  transform: scale(1.06);
+}
+
+.project-github-icon {
+  grid-area: 1 / 1;
+  display: block;
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  transition: opacity 160ms ease;
+}
+
+.project-github-icon-dark { opacity: 0; }
+
+html[data-theme="dark"] .project-github-icon-light { opacity: 0; }
+html[data-theme="dark"] .project-github-icon-dark { opacity: 1; }
 
 .project-arrow {
   display: block;
