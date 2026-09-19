@@ -3,6 +3,48 @@ const preloaderStartedAt = performance.now();
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let preloaderFinished = false;
 
+const themeToggle = document.querySelector(".theme-toggle");
+const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+function storedTheme() {
+  try {
+    const theme = localStorage.getItem("harmony-theme");
+    return theme === "dark" || theme === "light" ? theme : null;
+  } catch {
+    return null;
+  }
+}
+
+function applyTheme(theme, persist = false) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  themeToggle?.setAttribute("aria-pressed", String(isDark));
+  themeToggle?.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeColorMeta?.setAttribute("content", isDark ? "#29374c" : "#fffefd");
+
+  if (!persist) return;
+  try {
+    localStorage.setItem("harmony-theme", isDark ? "dark" : "light");
+  } catch {
+    // The selected theme still applies when storage is unavailable.
+  }
+}
+
+applyTheme(document.documentElement.dataset.theme || (systemThemeQuery.matches ? "dark" : "light"));
+
+themeToggle?.addEventListener("click", () => {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(nextTheme, true);
+});
+
+const syncWithSystemTheme = (event) => {
+  if (!storedTheme()) applyTheme(event.matches ? "dark" : "light");
+};
+
+if (systemThemeQuery.addEventListener) systemThemeQuery.addEventListener("change", syncWithSystemTheme);
+else systemThemeQuery.addListener(syncWithSystemTheme);
+
 const heroCopy = document.querySelector(".hero-copy");
 const categoryTabs = document.querySelector(".category-tabs");
 const heroLineStagger = 140;
@@ -769,4 +811,4 @@ document.addEventListener("visibilitychange", () => {
 
 prepareSingingHitMap();
 preloadSingingAnimation();
-renderProjectCards(collections.community);
+renderProjectCards(collections.projects);

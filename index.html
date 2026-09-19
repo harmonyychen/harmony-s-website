@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Harmony Chen — systems design engineering, product, design, and technology." />
-    <meta name="theme-color" content="#dcd9d2" />
+    <meta name="theme-color" content="#fffefd" />
     <meta property="og:title" content="Harmony Chen" />
     <meta property="og:description" content="Systems design engineering, product, design, and technology." />
     <meta property="og:type" content="website" />
@@ -14,11 +14,26 @@
     <link rel="icon" href="favicon.png" type="image/png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..600;1,400..600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..600;1,400..600&display=swap" rel="stylesheet" />
+    <script>
+      (() => {
+        try {
+          const savedTheme = localStorage.getItem("harmony-theme");
+          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
   </head>
   <body>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+      <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
+      <img class="theme-icon theme-icon-sun" src="theme-sun.png" alt="" aria-hidden="true" />
+    </button>
     <main>
       <section class="hero" aria-labelledby="page-title">
         <div class="page-shell hero-inner">
@@ -54,13 +69,13 @@
       <section class="work" id="work" aria-label="Selected work">
         <div class="page-shell work-inner">
           <div class="category-tabs" role="tablist" aria-label="Portfolio categories">
-            <button id="tab-projects" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="projects" tabindex="-1">projects</button>
-            <button id="tab-community" type="button" role="tab" aria-selected="true" aria-controls="collection-panel" data-category="community" tabindex="0">community</button>
+            <button id="tab-projects" type="button" role="tab" aria-selected="true" aria-controls="collection-panel" data-category="projects" tabindex="0">projects</button>
+            <button id="tab-community" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="community" tabindex="-1">community</button>
             <button id="tab-case-study" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="case-study" tabindex="-1">case study</button>
             <button id="tab-graphics" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="graphics" tabindex="-1">graphics</button>
             <button id="tab-ifaq" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="ifaq" tabindex="-1">ifaq</button>
           </div>
-          <div class="collection-grid" id="collection-panel" role="tabpanel" aria-labelledby="tab-community"></div>
+          <div class="collection-grid" id="collection-panel" role="tabpanel" aria-labelledby="tab-projects"></div>
         </div>
       </section>
     </main>

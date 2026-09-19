@@ -1,5 +1,6 @@
 :root {
-  --background: #f2efe9;
+  color-scheme: light;
+  --background: #fffefd;
   --loading: #b9b5af;
   --accent: #3f4b63;
   --ink: #121212;
@@ -7,6 +8,15 @@
   --content-width: 900px;
   --page-gutter: 24px;
   --type-size: 20px;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #29374c;
+  --loading: #202c3e;
+  --accent: #d6deea;
+  --ink: #f4f1eb;
+  --media: #202c3e;
 }
 
 * { box-sizing: border-box; }
@@ -19,15 +29,84 @@ body {
   background: var(--background);
   color: var(--ink);
   font-family: "Lora", Georgia, serif;
+
+  /*font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;*/
   font-size: 18px;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: -4%;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 320ms ease, color 320ms ease;
 }
 
 button, input, textarea, select { font: inherit; }
 a { color: inherit; }
+
+.theme-toggle {
+  position: absolute;
+  z-index: 30;
+  top: 80px;
+  right: max(var(--page-gutter), calc((100vw - var(--content-width)) / 2));
+  display: grid;
+  width: 35px;
+  height: 35px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  padding: 4px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-toggle:hover {
+  background: transparent;
+  transform: scale(1.06);
+}
+
+.theme-toggle:active { transform: scale(0.94); }
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.theme-icon {
+  grid-area: 1 / 1;
+  display: block;
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  transition: opacity 180ms ease, transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-icon-sun {
+  opacity: 0;
+  transform: rotate(-12deg) scale(0.78);
+}
+
+html[data-theme="dark"] .theme-icon-moon {
+  opacity: 0;
+  transform: rotate(25deg) scale(0.72);
+}
+
+html[data-theme="dark"] .theme-icon-sun {
+  opacity: 1;
+  filter: brightness(0) invert(1);
+  transform: rotate(0) scale(1);
+}
+
+html[data-theme="dark"] .project-arrow {
+  filter: brightness(0) invert(1);
+}
+
+html[data-theme="dark"] .card-pill {
+  background: rgba(24, 34, 50, 0.9);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .singer-note { color: #3f4b63; }
 
 .page-shell {
   width: min(calc(100% - (var(--page-gutter) * 2)), var(--content-width));
@@ -276,6 +355,7 @@ h1 {
   min-height: 39svh;
   padding: 0 0 110px;
   background: var(--background);
+  transition: background-color 320ms ease;
 }
 
 .category-tabs {
@@ -293,7 +373,10 @@ h1 {
   background: transparent;
   color: var(--accent);
   cursor: pointer;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 18px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
   line-height: 1.15;
   transition: background-color 160ms ease, color 160ms ease;
 }
@@ -402,7 +485,10 @@ h1 {
   border-radius: 10px;
   background: rgba(220, 217, 210, 0.92);
   color: var(--accent);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 18px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
   line-height: 1.1;
   backdrop-filter: blur(4px);
 }
@@ -426,7 +512,9 @@ h1 {
 
 .project-card p {
   margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 18px;
+  letter-spacing: -0.04em;
   line-height: 1.35;
   font-weight: 300;
 }
@@ -558,11 +646,13 @@ h1 {
   padding: 24px;
   background: var(--background);
   object-fit: contain;
+  transition: background-color 320ms ease;
 }
 
 .site-footer {
   padding: 0 0 110px;
   background: var(--background);
+  transition: background-color 320ms ease;
 }
 
 .footer-inner { padding-top: 28px; }
@@ -578,7 +668,7 @@ h1 {
 
 .site-footer p {
   margin: 0 0 22px;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--accent);
 }
 
@@ -591,6 +681,9 @@ h1 {
 .site-footer a {
   font-size: 16px;
   color: var(--accent);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.04em;
   text-decoration: none;
 }
 
@@ -619,6 +712,11 @@ h1 {
 }
 
 @media (max-width: 560px) {
+  .theme-toggle {
+    top: 28px;
+    right: var(--page-gutter);
+  }
+
   .category-tabs {
     flex-wrap: nowrap;
     gap: clamp(2px, 0.8vw, 5px);
