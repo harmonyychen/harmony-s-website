@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="About Harmony Chen." />
+    <meta name="theme-color" content="#fffefd" />
+    <title>Harmony Chen | About</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..600;1,400..600&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+    <script>
+      (() => {
+        try {
+          const savedTheme = localStorage.getItem("harmony-theme");
+          document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : "light";
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="pages.css" />
+    <script src="pages.js" defer></script>
+  </head>
+  <body class="inner-page">
+    <a class="home-link" href="index.html" aria-label="Return to home">
+      <img src="home-mark.png" alt="" aria-hidden="true" />
+    </a>
+    <header class="top-actions">
+      <nav class="site-links" aria-label="Primary navigation">
+        <a href="about.html" aria-current="page">about</a>
+        <a href="art.html">art</a>
+        <a href="resume.html">resume</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
+        <img class="theme-icon theme-icon-sun" src="theme-sun.png" alt="" aria-hidden="true" />
+      </button>
+    </header>
+
+    <main class="subpage-main">
+      <section class="page-shell about-intro" aria-labelledby="about-title">
+        <div class="about-portrait-card">
+          <img class="about-portrait" src="about-portrait.png" alt="Portrait of Harmony Chen" />
+        </div>
+        <div class="about-copy">
+          <h1 id="about-title">Hi, I’m Harmony!</h1>
+          <p>My curiosity in how different communities and technology interact led me to study <strong>Systems Design Engineering</strong> at the <strong>University of Waterloo</strong>. I’m passionate about creating actionable solutions and following through to achieve measurable goals. I’ve managed large-scale projects at non-profit organizations, won case competitions, and collaborated within design teams.</p>
+          <p>I’m particularly interested in improving systems and technology for underserved communities.</p>
+          <p class="about-list-intro">Outside of work and school, catch me</p>
+          <ul>
+            <li>attempting to return balls in tennis</li>
+            <li>harmonizing during karaoke</li>
+            <li>cooking up my next side-quest! (food or otherwise)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="page-shell about-faq" aria-labelledby="ifaq-title" data-about-faq>
+        <h2 class="about-faq-heading" id="ifaq-title">iFAQ | infrequently asked questions</h2>
+        <p class="about-faq-subtitle">questions no one asked (but I still have the answer to)</p>
+
+        <div class="ifaq-layout">
+          <div class="faq-list">
+            <div class="faq-item" data-photos="camera-1.png,camera-2.png,camera-3.png">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="about-answer-1">
+                <span>what’s your go-to digicam?</span><span class="faq-toggle" aria-hidden="true"></span>
+              </button>
+              <div class="faq-answer" id="about-answer-1" aria-hidden="true">
+                <div class="faq-answer-inner"><p>My Nikon Coolpix. I love the ethereal quality of the flash. I bring it everywhere—a haven of my favourite people and places.</p></div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-photos="aporia-1.png,aporia-2.png,aporia-3.png">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="about-answer-2">
+                <span>something you’re proud of building?</span><span class="faq-toggle" aria-hidden="true"></span>
+              </button>
+              <div class="faq-answer" id="about-answer-2" aria-hidden="true">
+                <div class="faq-answer-inner"><p>Aporia Literary Journal, a poetry and visual arts journal and community featuring talented young people across Canada. Explore it at <a class="faq-answer-link" href="https://www.aporialiterary.ca" target="_blank" rel="noopener noreferrer">aporialiterary.ca</a>.</p></div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-photos="owala-1.png,owala-2.png,owala-3.png">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="about-answer-3">
+                <span>best purchase?</span><span class="faq-toggle" aria-hidden="true"></span>
+              </button>
+              <div class="faq-answer" id="about-answer-3" aria-hidden="true">
+                <div class="faq-answer-inner"><p>My Owala. It’s truly one of my little joys in life and reminds me to stay hydrated.</p></div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-photos="exercise-1.png,exercise-2.png,exercise-3.png">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="about-answer-4">
+                <span>something more people should do?</span><span class="faq-toggle" aria-hidden="true"></span>
+              </button>
+              <div class="faq-answer" id="about-answer-4" aria-hidden="true">
+                <div class="faq-answer-inner"><p>Lift weights with a focus on mobility and athleticism. It’s an invaluable investment in long-term quality of life.</p></div>
+              </div>
+            </div>
+
+            <div class="faq-item" data-photos="art-1.png,art-2.png,art-3.png">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="about-answer-5">
+                <span>favourite art medium?</span><span class="faq-toggle" aria-hidden="true"></span>
+              </button>
+              <div class="faq-answer" id="about-answer-5" aria-hidden="true">
+                <div class="faq-answer-inner"><p>Acrylic. I love how fast-drying it is—it makes layering colours and finishing a work in one sitting easy.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ifaq-image" aria-hidden="true" hidden><img alt="" /></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-shell footer-inner">
+        <p>Have any cool ideas, want to start an a cappella group together, or just want to chat? Let’s connect!</p>
+        <nav aria-label="Contact links">
+          <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:h789chen@uwaterloo.ca">Email</a>
+          <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

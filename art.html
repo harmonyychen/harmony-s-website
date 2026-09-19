@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A selection of artwork by Harmony Chen." />
+    <meta name="theme-color" content="#fffefd" />
+    <title>Harmony Chen | Art</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..600;1,400..600&display=swap" rel="stylesheet" />
+    <script>
+      (() => {
+        try {
+          const savedTheme = localStorage.getItem("harmony-theme");
+          document.documentElement.dataset.theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : "light";
+        } catch {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="pages.css" />
+    <script src="pages.js" defer></script>
+  </head>
+  <body class="inner-page">
+    <a class="home-link" href="index.html" aria-label="Return to home">
+      <img src="home-mark.png" alt="" aria-hidden="true" />
+    </a>
+    <header class="top-actions">
+      <nav class="site-links" aria-label="Primary navigation">
+        <a href="about.html">about</a>
+        <a href="art.html" aria-current="page">art</a>
+        <a href="resume.html">resume</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
+        <img class="theme-icon theme-icon-sun" src="theme-sun.png" alt="" aria-hidden="true" />
+      </button>
+    </header>
+
+    <main class="subpage-main">
+      <section class="page-shell" aria-labelledby="art-title">
+        <h1 class="subpage-heading" id="art-title">selection of works</h1>
+        <div class="art-grid" aria-label="Selection of artwork">
+          <div class="art-column">
+            <figure class="art-card">
+              <img src="art-landscape-1.png" alt="Colourful countryside landscape beneath a blue sky" loading="eager" decoding="async" />
+            </figure>
+            <figure class="art-card">
+              <img src="art-landscape-2.png" alt="Green field beneath billowing white clouds" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="art-card">
+              <img src="art-flowers.jpg" alt="Painting of pink flowers against a blue background" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="art-card">
+              <img src="art-sunset.jpg" alt="Vibrant red and blue sunset over water" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+
+          <div class="art-column">
+            <figure class="art-card art-card--fish">
+              <img src="art-fish.png" alt="Whimsical red fish suspended against a pale blue background" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="art-card art-card--garden">
+              <img src="art-garden.png" alt="Lush garden and pond beneath hanging willow branches" loading="lazy" decoding="async" />
+            </figure>
+            <figure class="art-card">
+              <img src="art-lotus.jpg" alt="Lotus pond with pink flowers and two ducks" loading="lazy" decoding="async" />
+            </figure>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-shell footer-inner">
+        <p>Have any cool ideas, want to start an a cappella group together, or just want to chat? Let’s connect!</p>
+        <nav aria-label="Contact links">
+          <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:h789chen@uwaterloo.ca">Email</a>
+          <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

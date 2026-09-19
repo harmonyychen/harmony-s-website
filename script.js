@@ -28,95 +28,11 @@ themeToggle?.addEventListener("click", () => {
   applyTheme(nextTheme, true);
 });
 
-const heroCopy = document.querySelector(".hero-copy");
-const categoryTabs = document.querySelector(".category-tabs");
-const heroLineStagger = 140;
-const heroLineDuration = 600;
-let projectButtonsReady = prefersReducedMotion;
-const pendingCardEntrances = new Map();
-
 function revealProjectCard(card, observer) {
   if (!card.isConnected) return;
   card.classList.add("card-in-view");
   observer?.unobserve(card);
 }
-
-function completeProjectButtonsEntrance() {
-  if (projectButtonsReady) return;
-  projectButtonsReady = true;
-
-  pendingCardEntrances.forEach((observer, card) => revealProjectCard(card, observer));
-  pendingCardEntrances.clear();
-}
-
-categoryTabs?.addEventListener("animationend", (event) => {
-  if (event.animationName === "hero-buttons-entry") completeProjectButtonsEntrance();
-});
-
-function wrapHeroWords(textNode) {
-  const parts = textNode.textContent.split(/(\s+)/);
-  const fragment = document.createDocumentFragment();
-
-  parts.forEach((part) => {
-    if (!part) return;
-    if (/^\s+$/.test(part)) {
-      fragment.append(document.createTextNode(part));
-      return;
-    }
-
-    const word = document.createElement("span");
-    word.className = "hero-line-word";
-    word.textContent = part;
-    fragment.append(word);
-  });
-
-  textNode.replaceWith(fragment);
-}
-
-function setHeroLineIndexes() {
-  const words = [...heroCopy.querySelectorAll(".hero-line-word")];
-  const lineTops = [];
-
-  words.forEach((word) => {
-    const top = Math.round(word.getBoundingClientRect().top);
-    let lineIndex = lineTops.findIndex((lineTop) => Math.abs(lineTop - top) <= 2);
-
-    if (lineIndex === -1) {
-      lineIndex = lineTops.length;
-      lineTops.push(top);
-    }
-
-    word.style.setProperty("--line-index", lineIndex);
-  });
-
-  const tabsDelay = Math.max(0, ((lineTops.length - 1) * heroLineStagger) + heroLineDuration);
-  categoryTabs?.style.setProperty("--tabs-delay", `${tabsDelay}ms`);
-  window.setTimeout(completeProjectButtonsEntrance, tabsDelay + 650);
-}
-
-function prepareHeroEntrance() {
-  if (!heroCopy || prefersReducedMotion) return;
-
-  const walker = document.createTreeWalker(heroCopy, NodeFilter.SHOW_TEXT);
-  const textNodes = [];
-
-  while (walker.nextNode()) textNodes.push(walker.currentNode);
-  textNodes.forEach(wrapHeroWords);
-
-  document.documentElement.classList.add("has-entrance-motion");
-
-  const beginEntrance = () => {
-    window.requestAnimationFrame(() => {
-      setHeroLineIndexes();
-      document.documentElement.classList.add("entrance-motion-ready");
-    });
-  };
-
-  if (document.fonts?.ready) document.fonts.ready.then(beginEntrance, beginEntrance);
-  else beginEntrance();
-}
-
-prepareHeroEntrance();
 
 function finishPreloader() {
   if (preloaderFinished) return;
@@ -237,15 +153,7 @@ function observeCardEntrances() {
 
   cardEntranceObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
-      if (!entry.isIntersecting) {
-        pendingCardEntrances.delete(entry.target);
-        return;
-      }
-
-      if (!projectButtonsReady) {
-        pendingCardEntrances.set(entry.target, observer);
-        return;
-      }
+      if (!entry.isIntersecting) return;
 
       revealProjectCard(entry.target, observer);
     });
@@ -879,7 +787,6 @@ function showCollection(category, activeTab) {
   cardEntranceObserver?.disconnect();
   cardVideoObserver?.disconnect();
   cardVideoObserver = null;
-  pendingCardEntrances.clear();
   panel.querySelectorAll("video").forEach((video) => {
     video.dataset.autoplayDisabled = "true";
     clearCardVideoRetry(video);

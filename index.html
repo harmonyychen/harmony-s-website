@@ -29,11 +29,14 @@
     <script src="script.js" defer></script>
   </head>
   <body>
+    <a class="home-link" href="index.html" aria-label="Return to home" aria-current="page">
+      <img src="home-mark.png" alt="" aria-hidden="true" />
+    </a>
     <header class="top-actions">
-      <nav class="social-links" aria-label="Contact links">
-        <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="mailto:h789chen@uwaterloo.ca">Email</a>
-        <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <nav class="site-links" aria-label="Primary navigation">
+        <a href="about.html">about</a>
+        <a href="art.html">art</a>
+        <a href="resume.html">resume</a>
       </nav>
       <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
         <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />
@@ -55,7 +58,7 @@
             <!--<img src="hero-tennis.png" alt="Harmony playing tennis" />-->
           </div>
           <div class="hero-copy">
-            <h1 id="page-title" tabindex="0" data-hover-card="" data-hover-card-image="harmony-hover.png" data-hover-card-image-alt="Portrait of Harmony Chen" data-hover-card-width="190" data-hover-card-shape="circle">Harmony Chen</h1>
+            <h1 id="page-title">Harmony Chen</h1>
             <p class="intro">
               Systems Design Engineering @
               <a href="https://uwaterloo.ca/future-students/programs/systems-design-engineering" target="_blank" rel="noopener noreferrer" data-hover-card-title="University of Waterloo" data-hover-card="Systems Design Engineering in Waterloo, Ontario." data-hover-card-image="waterloo-hover.png" data-hover-card-image-alt="University of Waterloo Systems Design Engineering webpage" data-hover-card-width="250">University of Waterloo</a>;
@@ -79,12 +82,22 @@
             <button id="tab-community" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="community" tabindex="-1">community</button>
             <button id="tab-case-study" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="case-study" tabindex="-1">case study</button>
             <button id="tab-graphics" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="graphics" tabindex="-1">graphics</button>
-            <button id="tab-ifaq" type="button" role="tab" aria-selected="false" aria-controls="collection-panel" data-category="ifaq" tabindex="-1">ifaq</button>
           </div>
           <div class="collection-grid" id="collection-panel" role="tabpanel" aria-labelledby="tab-projects"></div>
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="page-shell footer-inner">
+        <p>Have any cool ideas, want to start an a cappella group together, or just want to chat? Let’s connect!</p>
+        <nav aria-label="Contact links">
+          <a href="https://www.linkedin.com/in/harmonychenn/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:h789chen@uwaterloo.ca">Email</a>
+          <a href="https://www.instagram.com/harmononey/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </nav>
+      </div>
+    </footer>
 
     <template id="project-card-template">
       <article class="project-card" data-card>
