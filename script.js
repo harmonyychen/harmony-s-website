@@ -260,12 +260,21 @@ function observeCardEntrances() {
 const singingIllustration = document.querySelector("[data-singing-animation]");
 const singingAnimationTrigger = document.querySelector(".hero-singer-wrap");
 const singingNote = document.querySelector(".singer-note");
-const singingAnimationFrames = [
-  "hero-singing-frame-1.png",
-  "hero-singing-frame-2.png",
-  "hero-singing-frame-3.png",
-  "hero-singing-frame-4.png",
-];
+const singingAnimationFramesByTheme = {
+  light: [
+    "hero-singing-frame-1.png",
+    "hero-singing-frame-2.png",
+    "hero-singing-frame-3.png",
+    "hero-singing-frame-4.png",
+  ],
+  dark: [
+    "hero-singing-frame-1-dark.png",
+    "hero-singing-frame-2-dark.png",
+    "hero-singing-frame-3-dark.png",
+    "hero-singing-frame-4-dark.png",
+  ],
+};
+let singingAnimationFrames = singingAnimationFramesByTheme.light;
 const singingFrameSequence = [ 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3];
 let singingSequenceIndex = 0;
 let singingAnimationTimer = null;
@@ -276,6 +285,7 @@ let singingHitMapWidth = 0;
 let singingHitMapHeight = 0;
 let singingHitMapMinimumX = null;
 let singingHitMapMaximumX = null;
+let singingHitMapRequest = 0;
 
 const hoverCardTriggers = [...document.querySelectorAll("[data-hover-card]")];
 const textHoverCard = document.createElement("div");
@@ -424,8 +434,13 @@ function setSingingNotePosition(x, y) {
 function prepareSingingHitMap() {
   const source = singingAnimationFrames[0];
   const image = new Image();
+  const request = ++singingHitMapRequest;
+
+  singingHitMapMinimumX = null;
+  singingHitMapMaximumX = null;
 
   image.addEventListener("load", () => {
+    if (request !== singingHitMapRequest) return;
     const scale = Math.min(1, 600 / image.naturalHeight);
     singingHitMapWidth = Math.max(1, Math.round(image.naturalWidth * scale));
     singingHitMapHeight = Math.max(1, Math.round(image.naturalHeight * scale));
@@ -487,7 +502,8 @@ function stopSingingAnimation() {
 function preloadSingingAnimation() {
   if (!singingIllustration) return;
 
-  Promise.all(singingAnimationFrames.map((source) => new Promise((resolve) => {
+  const allFrames = Object.values(singingAnimationFramesByTheme).flat();
+  Promise.all(allFrames.map((source) => new Promise((resolve) => {
     const frame = new Image();
     frame.addEventListener("load", resolve, { once: true });
     frame.addEventListener("error", resolve, { once: true });
@@ -497,6 +513,22 @@ function preloadSingingAnimation() {
     startSingingAnimation();
   });
 }
+
+function syncSingingAnimationTheme() {
+  if (!singingIllustration) return;
+  const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  const nextFrames = singingAnimationFramesByTheme[theme];
+
+  singingAnimationFrames = nextFrames;
+  singingIllustration.src = singingAnimationFrames[singingFrameSequence[singingSequenceIndex]];
+  prepareSingingHitMap();
+}
+
+const singingThemeObserver = new MutationObserver(syncSingingAnimationTheme);
+singingThemeObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-theme"],
+});
 
 if (singingAnimationTrigger) {
   singingAnimationTrigger.addEventListener("pointerenter", updateSingingArtworkHover);
@@ -918,6 +950,6 @@ document.addEventListener("visibilitychange", () => {
   startSingingAnimation();
 });
 
-prepareSingingHitMap();
+syncSingingAnimationTheme();
 preloadSingingAnimation();
 renderProjectCards(collections.projects);

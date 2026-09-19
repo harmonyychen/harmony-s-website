@@ -203,6 +203,11 @@ html[data-theme="dark"] .singer-note { color: #3f4b63; }
   transform: translateX(-42.8%);
 }
 
+html[data-theme="dark"] .hero-singer img {
+  bottom: -48.3%;
+  height: 158.3%;
+}
+
 .singer-note {
   position: fixed;
   z-index: 3;
