@@ -28,6 +28,33 @@ themeToggle?.addEventListener("click", () => {
   applyTheme(nextTheme, true);
 });
 
+const heroDateTime = document.querySelector("[data-live-datetime]");
+const heroDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true,
+});
+
+function updateHeroDateTime() {
+  if (!heroDateTime) return;
+  const now = new Date();
+  const parts = {};
+
+  heroDateTimeFormatter.formatToParts(now).forEach(({ type, value }) => {
+    if (type !== "literal") parts[type] = value;
+  });
+
+  heroDateTime.textContent = `${parts.month.toLowerCase()} ${parts.day}, ${parts.year} ${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
+  heroDateTime.dateTime = now.toISOString();
+  const millisecondsUntilNextMinute = 60000 - ((now.getSeconds() * 1000) + now.getMilliseconds());
+  window.setTimeout(updateHeroDateTime, millisecondsUntilNextMinute + 20);
+}
+
+updateHeroDateTime();
+
 function finishPreloader() {
   if (preloaderFinished) return;
   preloaderFinished = true;
@@ -129,36 +156,6 @@ let cardVideoObserver = null;
 const cardVideoRetryTimers = new WeakMap();
 const cardVideoRetryDelays = [0, 200, 800, 2000];
 
-const singingIllustration = document.querySelector("[data-singing-animation]");
-const singingAnimationTrigger = document.querySelector(".hero-singer-wrap");
-const singingNote = document.querySelector(".singer-note");
-const singingAnimationFramesByTheme = {
-  light: [
-    "hero-singing-frame-1.png",
-    "hero-singing-frame-2.png",
-    "hero-singing-frame-3.png",
-    "hero-singing-frame-4.png",
-  ],
-  dark: [
-    "hero-singing-frame-1-dark.png",
-    "hero-singing-frame-2-dark.png",
-    "hero-singing-frame-3-dark.png",
-    "hero-singing-frame-4-dark.png",
-  ],
-};
-let singingAnimationFrames = singingAnimationFramesByTheme.light;
-const singingFrameSequence = [ 0, 0, 0, 1, 2, 3, 3, 3, 3, 3, 3, 3];
-let singingSequenceIndex = 0;
-let singingAnimationTimer = null;
-let singingFramesReady = false;
-let singingNoteFrame = null;
-let singingNotePoint = { x: 0, y: 0 };
-let singingHitMapWidth = 0;
-let singingHitMapHeight = 0;
-let singingHitMapMinimumX = null;
-let singingHitMapMaximumX = null;
-let singingHitMapRequest = 0;
-
 const hoverCardTriggers = [...document.querySelectorAll("[data-hover-card]")];
 const textHoverCard = document.createElement("div");
 const textHoverCardImage = document.createElement("img");
@@ -258,161 +255,6 @@ hoverCardTriggers.forEach((trigger) => {
   });
   trigger.addEventListener("blur", () => hideTextHoverCard(trigger));
 });
-
-function advanceSingingAnimation() {
-  if (!singingIllustration) return;
-  singingSequenceIndex = (singingSequenceIndex + 1) % singingFrameSequence.length;
-  singingIllustration.src = singingAnimationFrames[singingFrameSequence[singingSequenceIndex]];
-}
-
-function startSingingAnimation() {
-  if (
-    !singingIllustration
-    || !singingFramesReady
-    || singingAnimationTimer
-    || prefersReducedMotion
-    || document.hidden
-  ) return;
-
-  singingAnimationTimer = window.setInterval(advanceSingingAnimation, 1000 / 9);
-}
-
-function setSingingNotePosition(x, y) {
-  if (!singingNote) return;
-  singingNotePoint = { x, y };
-  if (singingNoteFrame) return;
-
-  singingNoteFrame = window.requestAnimationFrame(() => {
-    singingNoteFrame = null;
-    const gutter = 12;
-    const offset = 10;
-    const width = singingNote.offsetWidth;
-    const height = singingNote.offsetHeight;
-    let nextX = singingNotePoint.x + offset;
-    let nextY = singingNotePoint.y - height + offset;
-
-    if (nextX + width > window.innerWidth - gutter) {
-      nextX = singingNotePoint.x - width - offset;
-    }
-    if (nextY < gutter) nextY = singingNotePoint.y + offset * 2;
-
-    nextX = Math.max(gutter, Math.min(nextX, window.innerWidth - width - gutter));
-    nextY = Math.max(gutter, Math.min(nextY, window.innerHeight - height - gutter));
-    singingNote.style.setProperty("--singer-note-x", `${nextX}px`);
-    singingNote.style.setProperty("--singer-note-y", `${nextY}px`);
-  });
-}
-
-function prepareSingingHitMap() {
-  const source = singingAnimationFrames[0];
-  const image = new Image();
-  const request = ++singingHitMapRequest;
-
-  singingHitMapMinimumX = null;
-  singingHitMapMaximumX = null;
-
-  image.addEventListener("load", () => {
-    if (request !== singingHitMapRequest) return;
-    const scale = Math.min(1, 600 / image.naturalHeight);
-    singingHitMapWidth = Math.max(1, Math.round(image.naturalWidth * scale));
-    singingHitMapHeight = Math.max(1, Math.round(image.naturalHeight * scale));
-    const canvas = document.createElement("canvas");
-    canvas.width = singingHitMapWidth;
-    canvas.height = singingHitMapHeight;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    context.drawImage(image, 0, 0, singingHitMapWidth, singingHitMapHeight);
-    const pixels = context.getImageData(0, 0, singingHitMapWidth, singingHitMapHeight).data;
-    singingHitMapMinimumX = new Int32Array(singingHitMapHeight);
-    singingHitMapMaximumX = new Int32Array(singingHitMapHeight);
-    singingHitMapMinimumX.fill(singingHitMapWidth);
-    singingHitMapMaximumX.fill(-1);
-
-    for (let y = 0; y < singingHitMapHeight; y += 1) {
-      for (let x = 0; x < singingHitMapWidth; x += 1) {
-        if (pixels[((y * singingHitMapWidth) + x) * 4 + 3] < 24) continue;
-        singingHitMapMinimumX[y] = Math.min(singingHitMapMinimumX[y], x);
-        singingHitMapMaximumX[y] = Math.max(singingHitMapMaximumX[y], x);
-      }
-    }
-  }, { once: true });
-
-  image.src = source;
-}
-
-function isPointerOverSingingArtwork(clientX, clientY) {
-  if (!singingIllustration || !singingHitMapMinimumX || !singingHitMapMaximumX) return false;
-  const bounds = singingIllustration.getBoundingClientRect();
-  if (
-    clientX < bounds.left
-    || clientX > bounds.right
-    || clientY < bounds.top
-    || clientY > bounds.bottom
-  ) return false;
-
-  const x = Math.floor(((clientX - bounds.left) / bounds.width) * singingHitMapWidth);
-  const y = Math.min(
-    singingHitMapHeight - 1,
-    Math.max(0, Math.floor(((clientY - bounds.top) / bounds.height) * singingHitMapHeight)),
-  );
-  const padding = 3;
-  return x >= singingHitMapMinimumX[y] - padding && x <= singingHitMapMaximumX[y] + padding;
-}
-
-function updateSingingArtworkHover(event) {
-  if (!singingAnimationTrigger || event.pointerType === "touch") return;
-  const isOverArtwork = isPointerOverSingingArtwork(event.clientX, event.clientY);
-  singingAnimationTrigger.classList.toggle("is-image-hovered", isOverArtwork);
-  if (!isOverArtwork) return;
-  setSingingNotePosition(event.clientX, event.clientY);
-}
-
-function stopSingingAnimation() {
-  window.clearInterval(singingAnimationTimer);
-  singingAnimationTimer = null;
-}
-
-function preloadSingingAnimation() {
-  if (!singingIllustration) return;
-
-  const allFrames = Object.values(singingAnimationFramesByTheme).flat();
-  Promise.all(allFrames.map((source) => new Promise((resolve) => {
-    const frame = new Image();
-    frame.addEventListener("load", resolve, { once: true });
-    frame.addEventListener("error", resolve, { once: true });
-    frame.src = source;
-  }))).then(() => {
-    singingFramesReady = true;
-    startSingingAnimation();
-  });
-}
-
-function syncSingingAnimationTheme() {
-  if (!singingIllustration) return;
-  const theme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
-  const nextFrames = singingAnimationFramesByTheme[theme];
-
-  singingAnimationFrames = nextFrames;
-  singingIllustration.src = singingAnimationFrames[singingFrameSequence[singingSequenceIndex]];
-  prepareSingingHitMap();
-}
-
-const singingThemeObserver = new MutationObserver(syncSingingAnimationTheme);
-singingThemeObserver.observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: ["data-theme"],
-});
-
-if (singingAnimationTrigger) {
-  singingAnimationTrigger.addEventListener("pointerenter", updateSingingArtworkHover);
-  singingAnimationTrigger.addEventListener("pointermove", updateSingingArtworkHover);
-  singingAnimationTrigger.addEventListener("pointerleave", () => {
-    singingAnimationTrigger.classList.remove("is-image-hovered");
-  });
-  singingAnimationTrigger.addEventListener("focusin", () => {
-    const bounds = singingAnimationTrigger.getBoundingClientRect();
-    setSingingNotePosition(bounds.right, bounds.top + bounds.height / 2);
-  });
-}
 
 function clearCardVideoRetry(video) {
   const timer = cardVideoRetryTimers.get(video);
@@ -801,24 +643,14 @@ tabs.forEach((tab, index) => {
 });
 
 window.addEventListener("load", startAllCardVideos, { once: true });
-window.addEventListener("pageshow", () => {
-  startAllCardVideos();
-  startSingingAnimation();
-});
+window.addEventListener("pageshow", startAllCardVideos);
 window.addEventListener("focus", startAllCardVideos);
 document.addEventListener("pointerdown", startAllCardVideos, { capture: true, passive: true });
 document.addEventListener("touchstart", startAllCardVideos, { capture: true, passive: true });
 document.addEventListener("keydown", startAllCardVideos, { capture: true });
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden) {
-    stopSingingAnimation();
-    return;
-  }
-
+  if (document.hidden) return;
   startAllCardVideos();
-  startSingingAnimation();
 });
 
-syncSingingAnimationTheme();
-preloadSingingAnimation();
 renderProjectCards(collections.projects);

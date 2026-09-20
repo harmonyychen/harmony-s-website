@@ -172,8 +172,6 @@ html[data-theme="dark"] .card-pill {
   color: var(--ink);
 }
 
-html[data-theme="dark"] .singer-note { color: #3f4b63; }
-
 .page-shell {
   width: min(calc(100% - (var(--page-gutter) * 2)), var(--content-width));
   margin-inline: auto;
@@ -185,21 +183,20 @@ html[data-theme="dark"] .singer-note { color: #3f4b63; }
   min-height: 45svh;
   flex-direction: column;
   justify-content: flex-end;
-  padding-top: 260px;
+  padding-top: 120px;
   padding-bottom: 58px;
 }
 
 .hero-characters {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  display: flex;
   align-items: end;
-  gap: 36px;
+  gap: 0px;
   width: 100%;
   margin-bottom: 24px;
 }
 
 .hero-characters > img,
-.hero-singer-wrap {
+.hero-photo {
   display: block;
   width: 100%;
   max-width: 153px;
@@ -213,70 +210,61 @@ html[data-theme="dark"] .singer-note { color: #3f4b63; }
   object-position: center bottom;
 }
 
-.hero-singer-wrap {
+.hero-photo {
   position: relative;
-  z-index: 1;
-}
-
-.hero-singer {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 180 / 260;
-}
-
-.hero-singer img {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  display: block;
+  flex: 0 0 auto;
   width: auto;
   max-width: none;
-  height: 110%;
+  height: min(470px, 46vw);
+  margin-inline: 0;
+  overflow: hidden;
+  aspect-ratio: 1329 / 2233;
+  transform: translateY(25px);
+}
+
+.hero-photo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: 100%;
   pointer-events: none;
-  transform: translateX(-42.8%);
+  transition: opacity 180ms ease;
 }
 
-html[data-theme="dark"] .hero-singer img {
-  bottom: -48.3%;
-  height: 158.3%;
+/*
+ * Cropped workspace artwork controls:
+ * --workspace-x: positive moves right; negative moves left
+ * --workspace-y: positive moves down; negative moves up
+ * --workspace-scale: 1 is original size; 0.95 is smaller; 1.05 is larger
+ */
+.hero-photo-workspace {
+  --workspace-x: 0px;
+  --workspace-y: 25px;
+  --workspace-scale: 1;
+
+  transform: translate(var(--workspace-x), var(--workspace-y)) scale(var(--workspace-scale));
+  transform-origin: left bottom;
 }
 
-.singer-note {
-  position: fixed;
-  z-index: 3;
-  top: var(--singer-note-y, 12px);
-  left: var(--singer-note-x, 12px);
-  display: flex;
-  align-items: center;
-  width: 360px;
-  aspect-ratio: 279 / 178;
-  max-width: min(250px, calc(100vw - 28px));
-  box-sizing: border-box;
-  padding: 36px 36px 52px 46px;
-  background: url("singer-speech-bubble.png") center / 100% 100% no-repeat;
-  color: var(--accent);
-  font-size: 15px;
-  font-style: italic;
-  line-height: 1.35;
+.hero-photo-room {
+  height: min(455px, 44.5vw);
+  aspect-ratio: 1143 / 2167;
+  transform: translateX(-20px) translateY(13px);
+
+}
+
+.hero-photo-dark {
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: scale(0.4);
-  transform-origin: 16% 84%;
-  transition: opacity 220ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 220ms ease;
 }
 
-.hero-singer-wrap.is-image-hovered .singer-note,
-.hero-singer-wrap:focus-visible .singer-note {
+html[data-theme="dark"] .hero-photo-light {
+  opacity: 0;
+}
+
+html[data-theme="dark"] .hero-photo-dark {
   opacity: 1;
-  visibility: visible;
-  transform: scale(1);
-}
-
-.hero-singer-wrap:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 6px;
 }
 
 h1, h2, p {
@@ -289,6 +277,18 @@ h1 {
   margin: 0 0 24px;
   color: var(--accent);
   font-style: italic;
+  line-height: 1.2;
+}
+
+.hero-datetime {
+  display: block;
+  margin: 0 0 24px;
+  color: var(--accent);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 300;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
@@ -892,15 +892,9 @@ html[data-theme="dark"] .project-github-icon-dark { opacity: 1; }
   }
 
   .hero-characters {
-    gap: 12px;
     margin-bottom: 22px;
   }
 
-  .singer-note {
-    width: min(330px, calc(100vw - 48px));
-    padding: 32px 28px 46px 40px;
-    font-size: 18px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
