@@ -589,7 +589,25 @@ function bindFAQAccordions() {
 
 let collectionChangeTimer = null;
 
-function showCollection(category, activeTab) {
+function scrollToCollection(category) {
+  const scrollWhenReady = () => {
+    Promise.resolve(document.fonts?.ready).then(() => {
+      window.requestAnimationFrame(() => {
+        // A different tab or the home route may have been opened while loading.
+        if (window.siteRoutes.currentRoute() !== category) return;
+        document.querySelector("#work")?.scrollIntoView({
+          behavior: prefersReducedMotion ? "instant" : "smooth",
+          block: "start",
+        });
+      });
+    });
+  };
+
+  if (document.readyState === "complete") scrollWhenReady();
+  else window.addEventListener("load", scrollWhenReady, { once: true });
+}
+
+function showCollection(category, activeTab, scrollToWork = false) {
   window.clearTimeout(collectionChangeTimer);
   stopPhotoRotation();
   cardVideoObserver?.disconnect();
@@ -618,25 +636,31 @@ function showCollection(category, activeTab) {
 
     panel.setAttribute("aria-labelledby", activeTab.id);
     panel.classList.remove("is-changing");
+    if (scrollToWork) scrollToCollection(category);
   }, prefersReducedMotion ? 0 : 130);
 }
 
-function activateTab(tab, moveFocus = false, updateURL = true) {
-  if (updateURL && window.location.pathname !== tab.getAttribute("href")) {
-    window.history.pushState(null, "", tab.getAttribute("href") + window.location.search + window.location.hash);
+function activateTab(tab, moveFocus = false, updateURL = true, scrollToWork = false) {
+  if (updateURL && window.siteRoutes.currentRoute() !== tab.dataset.category) {
+    const destination = window.siteRoutes.url(tab.dataset.category) + window.location.search + window.location.hash;
+    if (!window.siteRoutes.isHTTP) {
+      window.location.assign(destination);
+      return;
+    }
+    window.history.pushState(null, "", destination);
   }
   tabs.forEach((candidate) => {
     const isActive = candidate === tab;
     candidate.setAttribute("aria-selected", String(isActive));
     candidate.tabIndex = isActive ? 0 : -1;
   });
-  showCollection(tab.dataset.category, tab);
-  if (moveFocus) tab.focus();
+  showCollection(tab.dataset.category, tab, scrollToWork);
+  if (moveFocus) tab.focus({ preventScroll: true });
 }
 
 tabs.forEach((tab, index) => {
   tab.addEventListener("click", (event) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (!window.siteRoutes.isHTTP || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     activateTab(tab);
   });
@@ -668,11 +692,11 @@ document.addEventListener("visibilitychange", () => {
   startAllCardVideos();
 });
 
-function showCollectionFromURL() {
-  const category = window.location.pathname.replace(/^\/|\/$/g, "");
-  const tab = tabs.find((candidate) => candidate.dataset.category === category) || tabs[0];
-  activateTab(tab, false, false);
+function showCollectionFromURL(scrollToWork = false) {
+  const category = window.siteRoutes.currentRoute();
+  const linkedTab = tabs.find((candidate) => candidate.dataset.category === category);
+  activateTab(linkedTab || tabs[0], false, false, scrollToWork && Boolean(linkedTab));
 }
 
-window.addEventListener("popstate", showCollectionFromURL);
-showCollectionFromURL();
+window.addEventListener("popstate", () => showCollectionFromURL());
+showCollectionFromURL(true);

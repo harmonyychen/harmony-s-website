@@ -380,6 +380,7 @@ h1 {
 .text-hover-card-copy { color: inherit; }
 
 .work {
+  scroll-margin-top: 24px;
   min-height: 39svh;
   padding: 0 0 200px;
   background: var(--background);
