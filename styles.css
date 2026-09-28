@@ -233,20 +233,6 @@ html[data-theme="dark"] .card-pill {
   transition: opacity 180ms ease;
 }
 
-/*
- * Cropped workspace artwork controls:
- * --workspace-x: positive moves right; negative moves left
- * --workspace-y: positive moves down; negative moves up
- * --workspace-scale: 1 is original size; 0.95 is smaller; 1.05 is larger
- */
-.hero-photo-workspace {
-  --workspace-x: 0px;
-  --workspace-y: 25px;
-  --workspace-scale: 1;
-
-  transform: translate(var(--workspace-x), var(--workspace-y)) scale(var(--workspace-scale));
-  transform-origin: left bottom;
-}
 
 .hero-photo-room {
   height: min(455px, 44.5vw);
@@ -407,7 +393,8 @@ h1 {
   margin-bottom: 32px;
 }
 
-.category-tabs button {
+.category-tabs [role="tab"] {
+  text-decoration: none;
   appearance: none;
   border: 1px dashed var(--accent);
   border-radius: 8px;
@@ -423,20 +410,20 @@ h1 {
   transition: background-color 160ms ease, color 160ms ease;
 }
 
-.category-tabs button:hover {
+.category-tabs [role="tab"]:hover {
   border-color: color-mix(in srgb, var(--accent) 50%, transparent);
   background: color-mix(in srgb, var(--accent) 50%, transparent);
   opacity: 1;
   color: var(--background);
 }
 
-.category-tabs button[aria-selected="true"] {
+.category-tabs [role="tab"][aria-selected="true"] {
   background: var(--accent);
   opacity: 0.75;
   color: var(--background);
 }
 
-.category-tabs button:focus-visible,
+.category-tabs [role="tab"]:focus-visible,
 .project-card:focus-visible,
 .project-github:focus-visible,
 .graphics-scroll:focus-visible,
@@ -880,7 +867,7 @@ html[data-theme="dark"] .project-github-icon-dark { opacity: 1; }
     gap: clamp(2px, 0.8vw, 5px);
   }
 
-  .category-tabs button {
+  .category-tabs [role="tab"] {
     flex: 1 1 auto;
     min-width: 0;
     padding: 2px clamp(3px, 1vw, 5px) 3px;

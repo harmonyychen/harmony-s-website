@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <base href="/" />
+    <script src="routes.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Resume for Harmony Chen." />
     <meta name="theme-color" content="#fffefd" />
@@ -25,14 +27,14 @@
     <script src="pages.js" defer></script>
   </head>
   <body class="inner-page">
-    <a class="home-link" href="index.html" aria-label="Return to home">
+    <a class="home-link" href="/home" aria-label="Return to home">
       <img src="home-mark.png" alt="" aria-hidden="true" />
     </a>
     <header class="top-actions">
       <nav class="site-links" aria-label="Primary navigation">
-        <a href="about.html">about</a>
-        <a href="art.html">art</a>
-        <a href="resume.html" aria-current="page">resume</a>
+        <a href="/about">about</a>
+        <a href="/art">art</a>
+        <a href="/resume" aria-current="page">resume</a>
       </nav>
       <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
         <img class="theme-icon theme-icon-moon" src="theme-moon.png" alt="" aria-hidden="true" />

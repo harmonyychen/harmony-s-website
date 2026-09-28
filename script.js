@@ -587,7 +587,10 @@ function bindFAQAccordions() {
   });
 }
 
+let collectionChangeTimer = null;
+
 function showCollection(category, activeTab) {
+  window.clearTimeout(collectionChangeTimer);
   stopPhotoRotation();
   cardVideoObserver?.disconnect();
   cardVideoObserver = null;
@@ -598,7 +601,7 @@ function showCollection(category, activeTab) {
   });
   panel.classList.add("is-changing");
 
-  window.setTimeout(() => {
+  collectionChangeTimer = window.setTimeout(() => {
     const isFAQ = category === "ifaq";
     const isGraphics = category === "graphics";
     panel.classList.toggle("is-ifaq", isFAQ);
@@ -618,7 +621,10 @@ function showCollection(category, activeTab) {
   }, prefersReducedMotion ? 0 : 130);
 }
 
-function activateTab(tab, moveFocus = false) {
+function activateTab(tab, moveFocus = false, updateURL = true) {
+  if (updateURL && window.location.pathname !== tab.getAttribute("href")) {
+    window.history.pushState(null, "", tab.getAttribute("href") + window.location.search + window.location.hash);
+  }
   tabs.forEach((candidate) => {
     const isActive = candidate === tab;
     candidate.setAttribute("aria-selected", String(isActive));
@@ -629,8 +635,17 @@ function activateTab(tab, moveFocus = false) {
 }
 
 tabs.forEach((tab, index) => {
-  tab.addEventListener("click", () => activateTab(tab));
+  tab.addEventListener("click", (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    activateTab(tab);
+  });
   tab.addEventListener("keydown", (event) => {
+    if (event.key === " ") {
+      event.preventDefault();
+      activateTab(tab);
+      return;
+    }
     let targetIndex;
     if (event.key === "ArrowRight") targetIndex = (index + 1) % tabs.length;
     if (event.key === "ArrowLeft") targetIndex = (index - 1 + tabs.length) % tabs.length;
@@ -653,4 +668,11 @@ document.addEventListener("visibilitychange", () => {
   startAllCardVideos();
 });
 
-renderProjectCards(collections.projects);
+function showCollectionFromURL() {
+  const category = window.location.pathname.replace(/^\/|\/$/g, "");
+  const tab = tabs.find((candidate) => candidate.dataset.category === category) || tabs[0];
+  activateTab(tab, false, false);
+}
+
+window.addEventListener("popstate", showCollectionFromURL);
+showCollectionFromURL();
